@@ -1,0 +1,33 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  name    String
+  email   String   @unique
+  pots    PotMember[]
+}
+
+model Pot {
+  id          Int      @id @default(autoincrement())
+  title       String   // e.g., "Summer Trip"
+  description String?
+  totalSaved  Float    @default(0)
+  target      Float    // The goal amount to show on the UI
+  members     PotMember[]
+}
+
+model PotMember {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  pot    Pot  @relation(fields: [potId], references: [id])
+  potId  Int
+
+  @@unique([userId, potId])
+}
