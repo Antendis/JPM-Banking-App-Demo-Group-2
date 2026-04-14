@@ -7,18 +7,18 @@ generator client {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  name    String
-  email   String   @unique
-  pots    PotMember[]
+  id    Int         @id @default(autoincrement())
+  name  String
+  email String      @unique
+  pots  PotMember[]
 }
 
 model Pot {
-  id          Int      @id @default(autoincrement())
-  title       String   // e.g., "Summer Trip"
+  id          Int         @id @default(autoincrement())
+  title       String // e.g., "Summer Trip"
   description String?
-  totalSaved  Float    @default(0)
-  target      Float    // The goal amount to show on the UI
+  totalSaved  Float       @default(0)
+  target      Float // The goal amount to show on the UI
   members     PotMember[]
 }
 
