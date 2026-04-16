@@ -6,35 +6,52 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const pathname = usePathname();
 
-  // We don't want to show the login/register links if we are already on those pages
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Login", href: "/login" },
-    { name: "Register", href: "/register" },
-  ];
+  const isActive = (path: string) => pathname === path;
 
   return (
-    <nav className="w-full bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center sticky top-0 z-50">
-      <div className="text-xl font-bold text-blue-900 tracking-tight">
-        <Link href="/">
-          OnePot <span className="text-green-700 font-medium">Bank</span>
+    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        {/* LOGO */}
+        <Link href="/" className="text-2xl font-bold tracking-tighter">
+          <span className="text-[#0033a1]">OnePot</span>
+          <span className="text-[#004a32]"> Bank</span>
         </Link>
-      </div>
 
-      <div className="flex gap-6">
-        {navLinks.map((link) => (
+        {/* Navigation Links */}
+        <div className="flex items-center gap-4 text-sm font-bold">
           <Link
-            key={link.href}
-            href={link.href}
-            className={`text-sm font-medium transition-colors ${
-              pathname === link.href
-                ? "text-blue-600"
-                : "text-gray-600 hover:text-blue-600"
+            href="/"
+            className={`px-3 py-2 rounded-md transition-colors ${
+              isActive("/")
+                ? "text-[#004a32] bg-green-50"
+                : "text-gray-700 hover:text-[#004a32]"
             }`}
           >
-            {link.name}
+            Home
           </Link>
-        ))}
+
+          <Link
+            href="/login"
+            className={`px-3 py-2 rounded-md transition-colors ${
+              isActive("/login")
+                ? "text-[#004a32] bg-green-50"
+                : "text-gray-700 hover:text-[#004a32]"
+            }`}
+          >
+            Log in
+          </Link>
+
+          <Link
+            href="/register"
+            className={`px-4 py-2 rounded-md transition-all shadow-sm ${
+              isActive("/register")
+                ? "bg-[#004a32] text-white"
+                : "bg-[#1a6e3f] text-white hover:bg-[#004a32]"
+            }`}
+          >
+            Register
+          </Link>
+        </div>
       </div>
     </nav>
   );
