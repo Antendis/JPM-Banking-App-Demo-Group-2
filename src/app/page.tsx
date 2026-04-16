@@ -1,114 +1,89 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+// import { getServerSession } from "next-auth"; // Uncomment when auth is ready
 
 export default function HomePage() {
+  // CRITERIA 6: Redirect if logged in (Pseudo-code for now)
+  // const session = await getServerSession();
+  // if (session) redirect('/dashboard');
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen flex flex-col bg-white">
       {/* HERO SECTION */}
-      <section className="bg-[#004a32] text-white py-20 px-6">
+      <section className="bg-[#1a6e3f] text-white py-20 px-6">
         <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-            OnePot <br /> Many Possibilities.
+            Banking that works for you
           </h1>
-          <p className="text-xl md:text-2xl text-green-100 mb-10 max-w-2xl">
-            Experience the next generation of secure digital banking.
+          <p className="text-xl md:text-2xl text-green-50 mb-10 max-w-2xl">
+            Experience the next generation of secure digital banking with
+            OnePot.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/register"
-              className="bg-white text-[#004a32] px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition-colors"
+              className="bg-white text-[#1a6e3f] px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition-colors shadow-lg"
             >
-              Open an Account
+              Open an account
             </Link>
             <Link
               href="/login"
               className="border-2 border-white text-white px-8 py-3 rounded-md font-bold hover:bg-white/10 transition-colors"
             >
-              Sign In
+              Log in
             </Link>
           </div>
         </div>
       </section>
 
-      {/* FEATURE CARDS SECTION */}
+      {/* FEATURES SECTION */}
       <section className="py-20 px-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Card 1 */}
-          <div className="p-8 border border-gray-200 rounded-xl hover:shadow-xl transition-shadow group">
-            <div className="w-12 h-12 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-6 font-bold text-xl group-hover:bg-[#004a32] group-hover:text-white transition-colors">
-              $
-            </div>
+          <div className="p-8 border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-4 text-[#1a6e3f]">⚡</div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">
-              Checking Accounts
+              Instant Transfers
             </h3>
-            <p className="text-gray-600 mb-4">
-              Get paid up to two days early and enjoy no monthly fees with a
-              qualifying deposit.
+            <p className="text-gray-600">
+              Move money between pots or to friends instantly with zero fees.
             </p>
-            <Link
-              href="/register"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Learn more &rarr;
-            </Link>
           </div>
-
           {/* Card 2 */}
-          <div className="p-8 border border-gray-200 rounded-xl hover:shadow-xl transition-shadow group">
-            <div className="w-12 h-12 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-6 font-bold text-xl group-hover:bg-[#004a32] group-hover:text-white transition-colors">
-              %
-            </div>
+          <div className="p-8 border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-4 text-[#1a6e3f]">🛡️</div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">
-              High Yield Savings
+              Virtual Cards
             </h3>
-            <p className="text-gray-600 mb-4">
-              Watch your wealth grow with an industry leading APY and zero
-              minimum balance requirements.
+            <p className="text-gray-600">
+              Bank securely with disposable cards that keep your account safe.
             </p>
-            <Link
-              href="/register"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Learn more &rarr;
-            </Link>
           </div>
-
           {/* Card 3 */}
-          <div className="p-8 border border-gray-200 rounded-xl hover:shadow-xl transition-shadow group">
-            <div className="w-12 h-12 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-6 font-bold text-xl group-hover:bg-[#004a32] group-hover:text-white transition-colors">
-              💳
-            </div>
+          <div className="p-8 border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-4 text-[#1a6e3f]">📊</div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">
-              Credit Cards
+              Spending Insights
             </h3>
-            <p className="text-gray-600 mb-4">
-              Earn rewards on every purchase with a OnePot card.
+            <p className="text-gray-600">
+              Track every penny with AI powered insights.
             </p>
-            <Link
-              href="/register"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Learn more &rarr;
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* FOOTER-LIKE CALLOUT */}
-      <section className="bg-gray-50 py-16 px-6 text-center border-t border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Ready to get started?
-        </h2>
-        <p className="text-gray-600 mb-8 max-w-lg mx-auto">
-          Join over 1 million members who trust OnePot Banking for their
-          financial future.
-        </p>
-        <Link
-          href="/register"
-          className="text-blue-600 font-bold hover:underline"
-        >
-          See all products and services
-        </Link>
-      </section>
+      {/* FOOTER */}
+      <footer className="mt-auto bg-gray-900 text-gray-400 py-12 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-white font-bold text-xl">OnePot Bank</div>
+          <div className="text-sm text-center md:text-right text-gray-500">
+            <p>© 2026 OnePot Banking. All rights reserved.</p>
+            <p className="mt-1 italic font-medium">
+              Demo app — not a real bank. For educational purposes only.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
