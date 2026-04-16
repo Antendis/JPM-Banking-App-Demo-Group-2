@@ -14,11 +14,12 @@
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.9.0",
     "next": "15.1.0",
+    "postcss": "^8.5.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.0.0",
@@ -28,7 +29,7 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "15.1.0",
     "prisma": "^7.7.0",
-    "tailwindcss": "^4.0.0",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5.0.0"
   }
 }
