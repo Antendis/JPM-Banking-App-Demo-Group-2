@@ -12,11 +12,11 @@ A full-stack demo banking application built with Next.js 15, Prisma, and SQLite.
 |---|---|
 | Homepage (marketing) | Done |
 | User registration | Done |
-| Login with OTP (2-step) | Done — OTP printed to dev console, no real email yet |
+| Login with OTP (2-step) | Done — emails sent via Resend |
 | Dashboard | Stub — placeholder only |
 | Pot (shared savings groups) | Schema defined, not yet built |
 | Route protection (auth middleware) | Not yet built |
-| Email sending | Planned |
+| Email sending | Done — Resend SDK |
 | Charts, statements, cards pages | Planned |
 
 ---
@@ -31,7 +31,7 @@ A full-stack demo banking application built with Next.js 15, Prisma, and SQLite.
 | Auth | Custom (bcrypt password hashing + 6-digit OTP) |
 | Styling | Tailwind CSS v4 |
 
-**Planned additions:** Resend (email), Recharts, @react-pdf/renderer, Vitest
+**Planned additions:** Recharts, @react-pdf/renderer, Vitest
 
 ---
 
@@ -53,7 +53,8 @@ cd JPM-Banking-App-Demo-Group-2
 npm install
 
 # 3. Set up environment variables
-echo 'DATABASE_URL="file:./prisma/dev.db"' > .env
+cp .env.example .env.local
+# then open .env.local and add your RESEND_API_KEY
 
 # 4. Run database migrations
 npx prisma migrate dev
@@ -73,14 +74,22 @@ The app will be running at [http://localhost:3000](http://localhost:3000).
 
 ## Environment variables
 
-Create a `.env` file at the project root:
+Copy `.env.example` to `.env.local` and fill in the values:
+
+```bash
+cp .env.example .env.local
+```
 
 ```env
 # SQLite file path for local development
 DATABASE_URL="file:./prisma/dev.db"
+
+# Resend API key — required for OTP emails
+# Get one at https://resend.com
+RESEND_API_KEY=re_...
 ```
 
-Additional variables will be required as features are added (email sending, deployment, etc.).
+> **Note:** The `from` address in OTP emails is `noreply@greenbank.demo`. For emails to actually deliver, that domain must be verified in your Resend dashboard. During development the `dev_otp` field in the login response still exposes the code so you can test without email.
 
 ---
 
@@ -103,6 +112,7 @@ src/
     Navbar.tsx                  # Shared navigation bar
   lib/
     prisma.ts                   # Singleton Prisma client
+    email.ts                    # sendOtpEmail() via Resend
 prisma/
   schema.prisma                 # Database schema (User, Pot, PotMember)
   migrations/                   # SQL migration history

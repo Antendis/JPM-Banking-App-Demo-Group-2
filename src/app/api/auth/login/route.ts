@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { sendOtpEmail } from "@/lib/email";
 
 function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -43,8 +44,7 @@ export async function POST(req: NextRequest) {
     data: { otpCode: otp, otpExpiry },
   });
 
-  // In production: send OTP via email. For now it prints to the dev console.
-  console.log(`\n[DEV] OTP for ${email}: ${otp}\n`);
+  await sendOtpEmail(email, otp);
 
   const body: { message: string; dev_otp?: string } = {
     message: "Verification code sent to your email.",
