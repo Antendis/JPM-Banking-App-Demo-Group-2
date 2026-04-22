@@ -59,7 +59,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/statements"
+              href="/dashboard/statements"
               className={`px-3 py-2 rounded-md transition-colors ${
                 isActive("/statements")
                   ? "text-[#004a32] bg-green-50"

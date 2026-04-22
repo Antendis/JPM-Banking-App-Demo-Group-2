@@ -72,6 +72,56 @@ const MOCK_TRANSACTIONS: Transaction[] = [
     reference: "TFL CONTACTLESS",
     counterparty: "Transport for London",
   },
+  {
+    id: "6",
+    description: "Amazon Marketplace",
+    category: "SHOPPING",
+    amount: 34.99,
+    type: "DEBIT",
+    date: "2026-04-15T18:22:00Z",
+    reference: "AMZ*MARKETPLACE",
+    counterparty: "Amazon EU Sarl",
+  },
+  {
+    id: "7",
+    description: "Spotify",
+    category: "ENTERTAINMENT",
+    amount: 11.99,
+    type: "DEBIT",
+    date: "2026-04-14T09:00:00Z",
+    reference: "SPOTIFY",
+    counterparty: "Spotify Ltd",
+  },
+  {
+    id: "8",
+    description: "Starbucks",
+    category: "EATING_OUT",
+    amount: 5.45,
+    type: "DEBIT",
+    date: "2026-04-13T10:12:00Z",
+    reference: "STARBUCKS STORE",
+    counterparty: "Starbucks UK",
+  },
+  {
+    id: "9",
+    description: "Council Tax",
+    category: "BILLS",
+    amount: 140.0,
+    type: "DEBIT",
+    date: "2026-04-12T00:00:00Z",
+    reference: "COUNCIL TAX APR",
+    counterparty: "Southampton City Council",
+  },
+  {
+    id: "10",
+    description: "Refund - Amazon",
+    category: "SHOPPING",
+    amount: 19.99,
+    type: "CREDIT",
+    date: "2026-04-11T15:30:00Z",
+    reference: "REFUND AMAZON",
+    counterparty: "Amazon EU Sarl",
+  },
 ];
 
 const CATEGORY_MAP: Record<string, { label: string; pill: string; avatar: string }> = {
@@ -230,7 +280,7 @@ export default function DashboardPage() {
             { label: "Send",       icon: "↑",  href: "/payments",   onClick: undefined },
             { label: "Request",    icon: "↓",  href: "/payments",   onClick: undefined },
             { label: toppingUp ? "Adding…" : "Top up", icon: toppingUp ? "⏳" : "+", href: undefined, onClick: handleTopup },
-            { label: "Statements", icon: "≡",  href: "/statements", onClick: undefined },
+            { label: "Statements", icon: "≡",  href: "/dashboard/statements", onClick: undefined },
           ].map(({ label, icon, href, onClick }) => {
             const inner = (
               <>
@@ -304,7 +354,7 @@ export default function DashboardPage() {
           </ul>
 
           <div className="px-5 py-4 border-t border-gray-50">
-            <Link href="/statements" className="text-sm text-[#004a32] font-semibold hover:underline">
+            <Link href="/dashboard/statements" className="text-sm text-[#004a32] font-semibold hover:underline">
               View all transactions →
             </Link>
           </div>
