@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-interface Transaction {
+interface ViewTransaction {
   id: string;
   description: string;
   category: string;
@@ -14,15 +14,7 @@ interface Transaction {
   counterparty: string;
 }
 
-const MOCK_ACCOUNT = {
-  firstName: "",
-  balance: 4218.63,
-  accountNumber: "12345678",
-  sortCode: "60-00-01",
-};
-
-
-const MOCK_TRANSACTIONS: Transaction[] = [
+const VIEW_TRANSACTIONS: ViewTransaction[] = [
   {
     id: "1",
     description: "Tesco Express",
@@ -37,7 +29,7 @@ const MOCK_TRANSACTIONS: Transaction[] = [
     id: "2",
     description: "Salary",
     category: "INCOME",
-    amount: 2850.0,
+    amount: 2850,
     type: "CREDIT",
     date: "2026-04-19T09:00:00Z",
     reference: "BACS SALARY APR26",
@@ -75,53 +67,223 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   },
   {
     id: "6",
-    description: "Amazon Marketplace",
+    description: "Amazon",
     category: "SHOPPING",
     amount: 34.99,
     type: "DEBIT",
-    date: "2026-04-15T18:22:00Z",
-    reference: "AMZ*MARKETPLACE",
-    counterparty: "Amazon EU Sarl",
+    date: "2026-04-15T18:10:00Z",
+    reference: "AMZ*ORDER",
+    counterparty: "Amazon UK",
   },
   {
     id: "7",
+    description: "Starbucks",
+    category: "EATING_OUT",
+    amount: 5.6,
+    type: "DEBIT",
+    date: "2026-04-15T09:05:00Z",
+    reference: "STARBUCKS",
+    counterparty: "Starbucks UK",
+  },
+  {
+    id: "8",
+    description: "Gym Membership",
+    category: "BILLS",
+    amount: 25,
+    type: "DEBIT",
+    date: "2026-04-14T07:00:00Z",
+    reference: "GYM MONTHLY",
+    counterparty: "PureGym",
+  },
+  {
+    id: "9",
     description: "Spotify",
     category: "ENTERTAINMENT",
-    amount: 11.99,
+    amount: 10.99,
     type: "DEBIT",
-    date: "2026-04-14T09:00:00Z",
+    date: "2026-04-13T00:00:00Z",
     reference: "SPOTIFY",
     counterparty: "Spotify Ltd",
   },
   {
-    id: "8",
-    description: "Starbucks",
-    category: "EATING_OUT",
-    amount: 5.45,
-    type: "DEBIT",
-    date: "2026-04-13T10:12:00Z",
-    reference: "STARBUCKS STORE",
-    counterparty: "Starbucks UK",
+    id: "10",
+    description: "Freelance Payment",
+    category: "INCOME",
+    amount: 600,
+    type: "CREDIT",
+    date: "2026-04-12T11:30:00Z",
+    reference: "CLIENT INV 104",
+    counterparty: "Design Studio",
   },
   {
-    id: "9",
+    id: "11",
+    description: "Boots Pharmacy",
+    category: "SHOPPING",
+    amount: 14.2,
+    type: "DEBIT",
+    date: "2026-04-11T15:20:00Z",
+    reference: "BOOTS STORE",
+    counterparty: "Boots UK",
+  },
+  {
+    id: "12",
     description: "Council Tax",
     category: "BILLS",
-    amount: 140.0,
+    amount: 140,
     type: "DEBIT",
-    date: "2026-04-12T00:00:00Z",
-    reference: "COUNCIL TAX APR",
-    counterparty: "Bournemouth City Council",
+    date: "2026-04-10T00:00:00Z",
+    reference: "COUNCIL TAX",
+    counterparty: "Bournemouth Council",
   },
   {
-    id: "10",
-    description: "Refund - Amazon",
+    id: "13",
+    description: "Sainsbury's",
+    category: "GROCERIES",
+    amount: 47.82,
+    type: "DEBIT",
+    date: "2026-04-09T17:05:00Z",
+    reference: "SAINSBURYS SUPERSTORE",
+    counterparty: "Sainsbury's Supermarkets Ltd",
+  },
+  {
+    id: "14",
+    description: "McDonald's",
+    category: "EATING_OUT",
+    amount: 7.49,
+    type: "DEBIT",
+    date: "2026-04-09T13:22:00Z",
+    reference: "MCDONALDS",
+    counterparty: "McDonald's UK",
+  },
+  {
+    id: "15",
+    description: "National Rail",
+    category: "TRANSPORT",
+    amount: 28.5,
+    type: "DEBIT",
+    date: "2026-04-08T08:10:00Z",
+    reference: "NATL RAIL TICKET",
+    counterparty: "National Rail Enquiries",
+  },
+  {
+    id: "16",
+    description: "Apple iCloud",
+    category: "BILLS",
+    amount: 2.99,
+    type: "DEBIT",
+    date: "2026-04-08T00:00:00Z",
+    reference: "APPLE.COM/BILL",
+    counterparty: "Apple Inc",
+  },
+  {
+    id: "17",
+    description: "ASOS",
     category: "SHOPPING",
-    amount: 19.99,
+    amount: 62.0,
+    type: "DEBIT",
+    date: "2026-04-07T19:44:00Z",
+    reference: "ASOS.COM",
+    counterparty: "ASOS PLC",
+  },
+  {
+    id: "18",
+    description: "Costa Coffee",
+    category: "EATING_OUT",
+    amount: 4.75,
+    type: "DEBIT",
+    date: "2026-04-07T08:55:00Z",
+    reference: "COSTA COFFEE",
+    counterparty: "Costa Ltd",
+  },
+  {
+    id: "19",
+    description: "Uber",
+    category: "TRANSPORT",
+    amount: 11.2,
+    type: "DEBIT",
+    date: "2026-04-06T23:30:00Z",
+    reference: "UBER* TRIP",
+    counterparty: "Uber BV",
+  },
+  {
+    id: "20",
+    description: "Disney+",
+    category: "ENTERTAINMENT",
+    amount: 4.99,
+    type: "DEBIT",
+    date: "2026-04-06T00:00:00Z",
+    reference: "DISNEYPLUS",
+    counterparty: "Disney Streaming Ltd",
+  },
+  {
+    id: "21",
+    description: "Waitrose",
+    category: "GROCERIES",
+    amount: 33.6,
+    type: "DEBIT",
+    date: "2026-04-05T16:20:00Z",
+    reference: "WAITROSE",
+    counterparty: "Waitrose Ltd",
+  },
+  {
+    id: "22",
+    description: "Electric Bill",
+    category: "BILLS",
+    amount: 87.0,
+    type: "DEBIT",
+    date: "2026-04-05T00:00:00Z",
+    reference: "OCTOPUS ENERGY",
+    counterparty: "Octopus Energy Ltd",
+  },
+  {
+    id: "23",
+    description: "Bank Transfer In",
+    category: "INCOME",
+    amount: 250.0,
     type: "CREDIT",
-    date: "2026-04-11T15:30:00Z",
-    reference: "REFUND AMAZON",
-    counterparty: "Amazon EU Sarl",
+    date: "2026-04-04T14:00:00Z",
+    reference: "FASTER PAYMENT",
+    counterparty: "James Wilson",
+  },
+  {
+    id: "24",
+    description: "H&M",
+    category: "SHOPPING",
+    amount: 29.99,
+    type: "DEBIT",
+    date: "2026-04-03T12:40:00Z",
+    reference: "H&M STORE",
+    counterparty: "H & M Hennes & Mauritz UK",
+  },
+  {
+    id: "25",
+    description: "Nando's",
+    category: "EATING_OUT",
+    amount: 18.9,
+    type: "DEBIT",
+    date: "2026-04-02T19:15:00Z",
+    reference: "NANDOS",
+    counterparty: "Nando's Chickenland Ltd",
+  },
+  {
+    id: "26",
+    description: "Water Bill",
+    category: "BILLS",
+    amount: 34.0,
+    type: "DEBIT",
+    date: "2026-04-02T00:00:00Z",
+    reference: "WESSEX WATER",
+    counterparty: "Wessex Water Services Ltd",
+  },
+  {
+    id: "27",
+    description: "Deliveroo",
+    category: "EATING_OUT",
+    amount: 22.49,
+    type: "DEBIT",
+    date: "2026-04-01T20:05:00Z",
+    reference: "DELIVEROO",
+    counterparty: "Deliveroo UK Ltd",
   },
 ];
 
@@ -140,13 +302,11 @@ function formatGBP(n: number): string {
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-}
-
-function getGreeting(name: string): string {
-  const hour = new Date().getHours();
-  const part = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
-  return `Good ${part}, ${name}`;
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function MerchantAvatar({ description, category }: { description: string; category: string }) {
@@ -164,7 +324,7 @@ function MerchantAvatar({ description, category }: { description: string; catego
   );
 }
 
-function TransactionModal({ tx, onClose }: { tx: Transaction; onClose: () => void }) {
+function TransactionModal({ tx, onClose }: { tx: ViewTransaction; onClose: () => void }) {
   const cat = CATEGORY_MAP[tx.category] ?? { label: tx.category, pill: "bg-gray-100 text-gray-600", avatar: "bg-gray-400" };
   return (
     <div
@@ -175,23 +335,19 @@ function TransactionModal({ tx, onClose }: { tx: Transaction; onClose: () => voi
         className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Coloured top strip */}
         <div className={`${cat.avatar} px-6 pt-8 pb-6 text-center`}>
           <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
             <span className="text-white text-2xl font-bold">
               {tx.description.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase()}
             </span>
           </div>
-          <p
-            className={`text-3xl font-bold text-white`}
-          >
+          <p className="text-3xl font-bold text-white">
             {tx.type === "DEBIT" ? "−" : "+"}
             {formatGBP(tx.amount)}
           </p>
           <p className="text-white/80 text-sm mt-1">{tx.description}</p>
         </div>
 
-        {/* Details */}
         <div className="px-6 py-5 space-y-4">
           <div className="flex justify-center">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${cat.pill}`}>
@@ -221,111 +377,92 @@ function TransactionModal({ tx, onClose }: { tx: Transaction; onClose: () => voi
   );
 }
 
-export default function DashboardPage() {
-  const [balance, setBalance]           = useState(MOCK_ACCOUNT.balance);
-  const [toppingUp, setToppingUp]       = useState(false);
-  const [topupSuccess, setTopupSuccess] = useState(false);
-  const [selectedTx, setSelectedTx]     = useState<Transaction | null>(null);
+export default function ViewAllTransactionsPage() {
+  const [activeFilter, setActiveFilter] = useState("ALL");
+  const [selectedTx, setSelectedTx] = useState<ViewTransaction | null>(null);
 
-  const handleTopup = async () => {
-    setToppingUp(true);
-    setTopupSuccess(false);
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    setBalance((prev) => prev + 100);
-    setToppingUp(false);
-    setTopupSuccess(true);
-    setTimeout(() => setTopupSuccess(false), 3000);
-  };
+  const filtered =
+    activeFilter === "ALL"
+      ? VIEW_TRANSACTIONS
+      : VIEW_TRANSACTIONS.filter((t) => t.category === activeFilter);
+
+  const totalIn = VIEW_TRANSACTIONS.filter((t) => t.type === "CREDIT").reduce(
+    (s, t) => s + t.amount,
+    0
+  );
+  const totalOut = VIEW_TRANSACTIONS.filter((t) => t.type === "DEBIT").reduce(
+    (s, t) => s + t.amount,
+    0
+  );
+  const net = totalIn - totalOut;
+
+  const categories = ["ALL", ...Object.keys(CATEGORY_MAP)];
 
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
       <div className="max-w-xl mx-auto px-4 pt-8 pb-16 space-y-5">
 
-        {/* Greeting */}
+        {/* Back link */}
         <div className="px-1">
-          <p className="text-gray-400 text-sm font-medium">{getGreeting(MOCK_ACCOUNT.firstName)}</p>
+          <Link href="/dashboard" className="text-sm text-[#004a32] font-semibold hover:underline">
+            ← Back to dashboard
+          </Link>
         </div>
 
-        {/* Balance card — dark like Starling */}
+        {/* Summary card */}
         <div className="bg-[#0e1c2f] rounded-3xl p-6 text-white shadow-lg">
-          <p className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-3">
-            Available balance
+          <p className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4">
+            This month
           </p>
-          <p className="text-5xl font-bold tracking-tight mb-5">
-            {formatGBP(balance)}
-          </p>
-
-          <div className="h-px bg-white/10 mb-4" />
-
-          <div className="flex gap-6 text-sm">
+          <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wide mb-0.5">Account</p>
-              <p className="font-semibold text-gray-200">{MOCK_ACCOUNT.accountNumber}</p>
+              <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Money in</p>
+              <p className="text-lg font-bold text-emerald-400">{formatGBP(totalIn)}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wide mb-0.5">Sort code</p>
-              <p className="font-semibold text-gray-200">{MOCK_ACCOUNT.sortCode}</p>
+              <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Money out</p>
+              <p className="text-lg font-bold text-white">{formatGBP(totalOut)}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Net</p>
+              <p className={`text-lg font-bold ${net >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                {formatGBP(net)}
+              </p>
             </div>
           </div>
-
-          {topupSuccess && (
-            <p className="mt-4 text-sm text-emerald-400 font-medium">
-              ✓ £100.00 added to your account
-            </p>
-          )}
         </div>
 
-        {/* Quick actions — circular buttons */}
-        <div className="grid grid-cols-4 gap-2">
-          {[
-            { label: "Send",       icon: "↑",  href: "/payments",   onClick: undefined },
-            { label: "Request",    icon: "↓",  href: "/payments",   onClick: undefined },
-            { label: toppingUp ? "Adding…" : "Top up", icon: toppingUp ? "⏳" : "+", href: undefined, onClick: handleTopup },
-            { label: "Statements", icon: "≡",  href: "/dashboard/statements", onClick: undefined },
-          ].map(({ label, icon, href, onClick }) => {
-            const inner = (
-              <>
-                <div className="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center text-xl text-[#0e1c2f] group-hover:bg-[#004a32] group-hover:text-white transition-colors mb-2">
-                  {icon}
-                </div>
-                <span className="text-xs font-semibold text-gray-600 group-hover:text-[#004a32] transition-colors">
-                  {label}
-                </span>
-              </>
-            );
-
-            return href ? (
-              <Link
-                key={label}
-                href={href}
-                className="flex flex-col items-center py-3 group"
-              >
-                {inner}
-              </Link>
-            ) : (
+        {/* Filter pills */}
+        <div className="flex flex-wrap gap-2">
+          {categories.map((cat) => {
+            const label = cat === "ALL" ? "All" : CATEGORY_MAP[cat]?.label ?? cat;
+            return (
               <button
-                key={label}
-                onClick={onClick}
-                disabled={toppingUp}
-                className="flex flex-col items-center py-3 group disabled:opacity-60 cursor-pointer"
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className={`text-xs px-4 py-1.5 rounded-full font-semibold border transition-all cursor-pointer ${
+                  activeFilter === cat
+                    ? "bg-[#004a32] text-white border-[#004a32]"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                }`}
               >
-                {inner}
+                {label}
               </button>
             );
           })}
         </div>
 
-        {/* Recent transactions */}
+        {/* Transaction list */}
         <div className="bg-white rounded-3xl overflow-hidden shadow-sm">
           <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-base">Recent transactions</h2>
-            <span className="text-xs text-[#004a32] font-semibold cursor-pointer hover:underline">
-              See all
-            </span>
+            <h2 className="font-bold text-gray-900 text-base">
+              {activeFilter === "ALL" ? "All transactions" : CATEGORY_MAP[activeFilter]?.label}
+            </h2>
+            <span className="text-xs text-gray-400">{filtered.length} transactions</span>
           </div>
 
           <ul className="divide-y divide-gray-50">
-            {MOCK_TRANSACTIONS.map((tx) => {
+            {filtered.map((tx) => {
               const cat = CATEGORY_MAP[tx.category] ?? { label: tx.category, pill: "bg-gray-100 text-gray-600", avatar: "bg-gray-400" };
               return (
                 <li
@@ -353,12 +490,6 @@ export default function DashboardPage() {
               );
             })}
           </ul>
-
-          <div className="px-5 py-4 border-t border-gray-50">
-            <Link href="/dashboard/viewalltransactions" className="text-sm text-[#004a32] font-semibold hover:underline">
-              View all transactions →
-            </Link>
-          </div>
         </div>
 
       </div>

@@ -133,7 +133,7 @@ const MOCK_TRANSACTIONS: Transaction[] = [
     type: "DEBIT",
     date: "2026-04-10T00:00:00Z",
     reference: "COUNCIL TAX",
-    counterparty: "Southampton Council",
+    counterparty: "Bournemouth Council",
   },
 ];
 
@@ -161,7 +161,8 @@ export default function StatementsPage() {
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">Statements</h1>
+          <h1 className="text-xl font-bold">Statement: April</h1>
+          
 
           <Link href="/dashboard" className="text-sm text-blue-600">
             ← Back

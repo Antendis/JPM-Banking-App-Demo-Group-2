@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const AUTHENTICATED_ROUTES = ["/dashboard", "/statements", "/pots", "/payments"];
+const AUTHENTICATED_ROUTES = ["/dashboard", "/statements", "/pots"];
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -37,18 +37,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/payments"
-              className={`px-3 py-2 rounded-md transition-colors ${
-                isActive("/payments")
-                  ? "text-[#004a32] bg-green-50"
-                  : "text-gray-600 hover:text-[#004a32] hover:bg-green-50"
-              }`}
-            >
-              Payments
-            </Link>
-
-            <Link
-              href="/pots"
+              href="/dashboard/pots"
               className={`px-3 py-2 rounded-md transition-colors ${
                 isActive("/pots")
                   ? "text-[#004a32] bg-green-50"
@@ -76,9 +65,7 @@ export default function Navbar() {
               Sign out
             </Link>
           </div>
-
         ) : (
-
           <div className="flex items-center gap-4 text-sm font-bold">
             <Link
               href="/"
@@ -113,7 +100,6 @@ export default function Navbar() {
               Register
             </Link>
           </div>
-
         )}
       </div>
     </nav>
