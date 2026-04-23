@@ -1,0 +1,43 @@
+API KEY: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb
+INSTRUCTOR BANK ID: a4ac1efc-8163-427c-bb9b-048496f4c126
+
+PUBLIC BANK LIST 
+curl https://paymentsystem-cf.pages.dev/api/banks
+
+--- ACTIONS TO DO ---
+
+CHECK QUEUE
+curl -H "X-API-Key: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb" \
+  https://paymentsystem-cf.pages.dev/api/queue/pending
+
+INITIATE A TRANSFER (remember to fill in correct merchant ID and check Instructor Bank ID is correct. "TeamX" for test, otherwise number.)
+curl -X POST https://paymentsystem-cf.pages.dev/api/authorize \
+  -H "X-API-Key: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"amount\": 25.00,
+    \"card_number\": \"000000000000d4ed\",
+    \"merchant_id\": \"TeamX\",
+    \"issuing_bank_id\": \"3613a9e0-3dce-4034-85ec-84dd305df30b\",
+    \"acquiring_bank_id\": \"a4ac1efc-8163-427c-bb9b-048496f4c126\"
+  }"
+
+APPROVE REQUEST (remember to fill the item ID)
+curl -X POST https://paymentsystem-cf.pages.dev/api/queue/authorize/<QUEUE ITEM ID>/respond \
+  -H "X-API-Key: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb" \
+  -H 'Content-Type: application/json' \
+  -d '{"approve": true, "response_code": "00"}'
+
+DENY REQUEST (remember to fill the item ID AND decline reason response code)
+curl -X POST https://paymentsystem-cf.pages.dev/api/queue/authorize/<QUEUE ITEM ID>/respond \
+  -H "X-API-Key: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb" \
+  -H 'Content-Type: application/json' \
+  -d '{"approve": false, "response_code": "<RESPONSE CODE>"}'
+
+
+--- CHECKS ---
+
+Bank's network-side balance + info:
+curl -H "X-API-Key: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb" \
+  https://paymentsystem-cf.pages.dev/api/banks/me
+
