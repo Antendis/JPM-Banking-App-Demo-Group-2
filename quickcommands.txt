@@ -15,7 +15,7 @@ curl -X POST https://paymentsystem-cf.pages.dev/api/authorize \
   -H "X-API-Key: 44jhK4fHh7fuveHbIlQndMgfyU6HMtlb" \
   -H 'Content-Type: application/json' \
   -d "{
-    \"amount\": 25.00,
+    \"amount\": 1.00,
     \"card_number\": \"000000000000d4ed\",
     \"merchant_id\": \"TeamX\",
     \"issuing_bank_id\": \"3613a9e0-3dce-4034-85ec-84dd305df30b\",
