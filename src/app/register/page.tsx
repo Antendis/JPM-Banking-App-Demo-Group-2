@@ -1,163 +1,166 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterPage() {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [status, setStatus] = useState<{
+    type: "error" | "success" | "";
+    message: string;
+  }>({
+    type: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Password Validation Logic
-  const validatePassword = (pass: string) => {
-    const minLength = 12;
-    const maxLength = 16;
-    // Regex: Upper, Lower, Number, Symbol
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,16}$/;
-
-    if (pass.length < minLength || pass.length > maxLength)
-      return "Password must be 12-16 characters long.";
-    if (!regex.test(pass))
-      return "Password must include uppercase, lowercase, numbers, and symbols.";
-    return null;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStatus({ type: "", message: "" });
     setLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const name = formData.get("name") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      setLoading(false);
-      return;
-    }
-
-    // Check password strength
-    const passwordError = validatePassword(password);
-    if (passwordError) {
-      setError(passwordError);
-      setLoading(false);
-      return;
-    }
 
     try {
-      const res = await fetch("/api/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
-        body: JSON.stringify({ email, password, name }),
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
-      if (res.ok) {
-        router.push("/login?message=Registration successful!");
+      if (response.status === 201) {
+        setStatus({
+          type: "success",
+          message: "Account created! Check your email for the code.",
+        });
+        // Give the user a moment to read the success message before redirecting
+        setTimeout(() => {
+          router.push(
+            `/verify-otp?email=${encodeURIComponent(formData.email)}`,
+          );
+        }, 1500);
+      } else if (response.status === 409) {
+        setStatus({
+          type: "error",
+          message:
+            "An account already exists with this email. Redirecting to login...",
+        });
+        setTimeout(() => {
+          router.push("/login");
+        }, 2500);
       } else {
-        const data = await res.json();
-        setError(data.message || "Something went wrong");
+        const data = await response.json();
+        setStatus({
+          type: "error",
+          message: data.message || "Registration failed.",
+        });
       }
-    } catch (err) {
-      setError("Failed to connect to the server.");
+    } catch {
+      setStatus({ type: "error", message: "Network error. Please try again." });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 py-10">
-      <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-        <h1 className="text-2xl font-bold text-center text-blue-900 mb-2">
-          OnePot Banking
-        </h1>
-        <p className="text-center text-gray-600 mb-6">
-          Create your secure account
-        </p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
+      <div className="w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-blue-900 mb-2">OnePot Bank</h1>
+          <p className="text-gray-500 font-medium">Secure Personal Banking</p>
+        </div>
 
-        {error && (
-          <div className="p-3 mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
-            {error}
+        <h2 className="text-lg font-semibold text-gray-800 mb-6">
+          Create your account
+        </h2>
+
+        {status.message && (
+          <div
+            className={`p-4 rounded-lg mb-6 text-sm font-medium animate-pulse ${
+              status.type === "success"
+                ? "bg-green-50 text-green-700 border border-green-100"
+                : "bg-red-50 text-red-700 border border-red-100"
+            }`}
+          >
+            {status.message}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
               Full Name
             </label>
             <input
-              name="name"
               type="text"
+              name="name"
               required
-              className="w-full p-2 mt-1 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all text-black"
+              placeholder="e.g. Jovarie Smith"
+              value={formData.name}
+              onChange={handleChange}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
               Email Address
             </label>
             <input
-              name="email"
               type="email"
+              name="email"
               required
-              className="w-full p-2 mt-1 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all text-black"
+              placeholder="name@example.com"
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
 
-          <hr className="my-2 border-gray-100" />
-
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
               Password
             </label>
             <input
+              type="password"
               name="password"
-              type="password"
               required
-              className="w-full p-2 mt-1 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <p className="text-[10px] text-gray-500 mt-1">
-              12-16 chars, include uppercase, lowercase, number & symbol.
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <input
-              name="confirmPassword"
-              type="password"
-              required
-              className="w-full p-2 mt-1 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+              minLength={8}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all text-black"
+              placeholder="Min. 8 characters"
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 mt-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-all cursor-pointer"
+            className="w-full py-4 px-4 bg-blue-900 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-800 hover:shadow-none active:scale-95 transition-all disabled:opacity-50"
           >
-            {loading ? "Verifying..." : "Register"}
+            {loading ? "Establishing Secure Connection..." : "Create Account"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-blue-600 hover:underline font-medium"
-          >
-            Login
-          </Link>
-        </p>
+        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-bold text-blue-600 hover:text-blue-500 transition-colors"
+            >
+              Log in here
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
