@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   if (!email || !password) {
     return NextResponse.json(
       { message: "Email and password are required." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     await bcrypt.hash("dummy", 12); // prevent timing attacks
     return NextResponse.json(
       { message: "Invalid credentials." },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   if (!valid) {
     return NextResponse.json(
       { message: "Invalid credentials." },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
