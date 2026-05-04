@@ -8,19 +8,27 @@ const DASHBOARD_ROUTES = ["/dashboard"];
 
 function PotIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 11h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9z"/>
-      <path d="M8 11V7a4 4 0 018 0v4"/>
-      <path d="M15 3h2a1 1 0 011 1v1"/>
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 11h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9z" />
+      <path d="M8 11V7a4 4 0 018 0v4" />
     </svg>
   );
 }
 
 export default function Navbar() {
-  const pathname  = usePathname();
-  const router    = useRouter();
+  const pathname = usePathname();
+  const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
-  const [menuOpen, setMenuOpen]     = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const isDashboard = DASHBOARD_ROUTES.some((r) => pathname.startsWith(r));
 
@@ -41,7 +49,6 @@ export default function Navbar() {
       {/* ── Desktop / top navbar ── */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-5 py-3 flex justify-between items-center">
-
           {/* Logo */}
           <Link
             href={isDashboard ? "/dashboard" : "/"}
@@ -59,10 +66,10 @@ export default function Navbar() {
           {isDashboard ? (
             <div className="hidden sm:flex items-center gap-1 text-sm">
               {[
-                { label: "Home",       href: "/dashboard" },
-                { label: "Pots",       href: "/dashboard/pots" },
-                { label: "Send",       href: "/dashboard/send" },
-                { label: "Scheduled",  href: "/dashboard/scheduled" },
+                { label: "Home", href: "/dashboard" },
+                { label: "Pots", href: "/dashboard/pots" },
+                { label: "Send", href: "/dashboard/send" },
+                { label: "Scheduled", href: "/dashboard/scheduled" },
                 { label: "Statements", href: "/dashboard/statements" },
               ].map(({ label, href }) => (
                 <Link
@@ -84,10 +91,16 @@ export default function Navbar() {
           ) : (
             /* Public nav */
             <div className="flex items-center gap-2 text-sm">
-              <Link href="/login" className="px-3 py-2 rounded-lg text-gray-600 hover:text-[#1a6e3f] font-medium transition-colors">
+              <Link
+                href="/login"
+                className="px-3 py-2 rounded-lg text-gray-600 hover:text-[#1a6e3f] font-medium transition-colors"
+              >
                 Log in
               </Link>
-              <Link href="/register" className="px-4 py-2 rounded-lg bg-[#1a6e3f] text-white font-semibold hover:bg-[#0d3d22] transition-colors shadow-sm">
+              <Link
+                href="/register"
+                className="px-4 py-2 rounded-lg bg-[#1a6e3f] text-white font-semibold hover:bg-[#0d3d22] transition-colors shadow-sm"
+              >
                 Get started
               </Link>
             </div>
@@ -100,11 +113,11 @@ export default function Navbar() {
         <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 safe-area-inset-bottom">
           <div className="grid grid-cols-5 h-16">
             {[
-              { label: "Home",      href: "/dashboard",            icon: "⌂" },
-              { label: "Pots",      href: "/dashboard/pots",       icon: "⬡" },
-              { label: "Send",      href: "/dashboard/send",       icon: "↑" },
-              { label: "Scheduled", href: "/dashboard/scheduled",  icon: "📅" },
-              { label: "More",      href: null,                    icon: "…" },
+              { label: "Home", href: "/dashboard", icon: "⌂" },
+              { label: "Pots", href: "/dashboard/pots", icon: "⬡" },
+              { label: "Send", href: "/dashboard/send", icon: "↑" },
+              { label: "Scheduled", href: "/dashboard/scheduled", icon: "📅" },
+              { label: "More", href: null, icon: "…" },
             ].map(({ label, href, icon }) =>
               href ? (
                 <Link
@@ -126,7 +139,7 @@ export default function Navbar() {
                   <span className="text-lg leading-none">{icon}</span>
                   <span>{label}</span>
                 </button>
-              )
+              ),
             )}
           </div>
         </nav>
@@ -142,12 +155,18 @@ export default function Navbar() {
             className="absolute bottom-16 left-0 right-0 bg-white rounded-t-2xl p-4 space-y-1"
             onClick={(e) => e.stopPropagation()}
           >
-            <Link href="/dashboard/viewalltransactions" onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700">
+            <Link
+              href="/dashboard/viewalltransactions"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700"
+            >
               Transactions
             </Link>
-            <Link href="/dashboard/statements" onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700">
+            <Link
+              href="/dashboard/statements"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700"
+            >
               Statements
             </Link>
             <button
