@@ -69,7 +69,6 @@ export default function Navbar() {
                 { label: "Home", href: "/dashboard" },
                 { label: "Pots", href: "/dashboard/pots" },
                 { label: "Send", href: "/dashboard/send" },
-                { label: "Scheduled", href: "/dashboard/scheduled" },
                 { label: "Statements", href: "/dashboard/statements" },
               ].map(({ label, href }) => (
                 <Link
@@ -116,7 +115,11 @@ export default function Navbar() {
               { label: "Home", href: "/dashboard", icon: "⌂" },
               { label: "Pots", href: "/dashboard/pots", icon: "⬡" },
               { label: "Send", href: "/dashboard/send", icon: "↑" },
-              { label: "Scheduled", href: "/dashboard/scheduled", icon: "📅" },
+              {
+                label: "Txns",
+                href: "/dashboard/viewalltransactions",
+                icon: "≡",
+              },
               { label: "More", href: null, icon: "…" },
             ].map(({ label, href, icon }) =>
               href ? (
@@ -155,13 +158,6 @@ export default function Navbar() {
             className="absolute bottom-16 left-0 right-0 bg-white rounded-t-2xl p-4 space-y-1"
             onClick={(e) => e.stopPropagation()}
           >
-            <Link
-              href="/dashboard/viewalltransactions"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700"
-            >
-              Transactions
-            </Link>
             <Link
               href="/dashboard/statements"
               onClick={() => setMenuOpen(false)}
