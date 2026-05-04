@@ -59,10 +59,11 @@ export default function Navbar() {
           {isDashboard ? (
             <div className="hidden sm:flex items-center gap-1 text-sm">
               {[
-                { label: "Home",         href: "/dashboard" },
-                { label: "Pots",         href: "/dashboard/pots" },
-                { label: "Send",         href: "/dashboard/send" },
-                { label: "Statements",   href: "/dashboard/statements" },
+                { label: "Home",       href: "/dashboard" },
+                { label: "Pots",       href: "/dashboard/pots" },
+                { label: "Send",       href: "/dashboard/send" },
+                { label: "Scheduled",  href: "/dashboard/scheduled" },
+                { label: "Statements", href: "/dashboard/statements" },
               ].map(({ label, href }) => (
                 <Link
                   key={href}
@@ -99,11 +100,11 @@ export default function Navbar() {
         <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 safe-area-inset-bottom">
           <div className="grid grid-cols-5 h-16">
             {[
-              { label: "Home",   href: "/dashboard",            icon: "⌂" },
-              { label: "Pots",   href: "/dashboard/pots",       icon: "⬡" },
-              { label: "Send",   href: "/dashboard/send",       icon: "↑" },
-              { label: "Txns",   href: "/dashboard/viewalltransactions", icon: "≡" },
-              { label: "More",   href: null,                    icon: "…" },
+              { label: "Home",      href: "/dashboard",            icon: "⌂" },
+              { label: "Pots",      href: "/dashboard/pots",       icon: "⬡" },
+              { label: "Send",      href: "/dashboard/send",       icon: "↑" },
+              { label: "Scheduled", href: "/dashboard/scheduled",  icon: "📅" },
+              { label: "More",      href: null,                    icon: "…" },
             ].map(({ label, href, icon }) =>
               href ? (
                 <Link
@@ -141,6 +142,10 @@ export default function Navbar() {
             className="absolute bottom-16 left-0 right-0 bg-white rounded-t-2xl p-4 space-y-1"
             onClick={(e) => e.stopPropagation()}
           >
+            <Link href="/dashboard/viewalltransactions" onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700">
+              Transactions
+            </Link>
             <Link href="/dashboard/statements" onClick={() => setMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700">
               Statements

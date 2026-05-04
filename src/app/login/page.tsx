@@ -21,12 +21,22 @@ export default function LoginPage() {
     const loginEmail = form.get("email") as string;
     const password   = form.get("password") as string;
 
-    try {
-      const res  = await fetch("/api/auth/login", {
+    const attempt = () =>
+      fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginEmail, password }),
       });
+
+    try {
+      let res: Response;
+      try {
+        res = await attempt();
+      } catch {
+        // One automatic retry for transient connection failures (e.g. DB cold start)
+        await new Promise((r) => setTimeout(r, 1500));
+        res = await attempt();
+      }
       const data = await res.json();
 
       if (res.ok) {

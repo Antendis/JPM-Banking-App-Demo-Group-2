@@ -7,35 +7,42 @@ generator client {
 }
 
 model User {
-  id            Int               @id @default(autoincrement())
-  name          String
-  email         String            @unique
-  passwordHash  String            @default("")
-  otpCode       String?
-  otpExpiry     DateTime?
-  isVerified    Boolean           @default(false)
-  balance       Float             @default(0)
-  accountNumber String?           @unique
-  sortCode      String            @default("30-00-01")
-  createdAt     DateTime          @default(now())
-  pots          PotMember[]
-  transactions  Transaction[]
-  contributions PotContribution[]
-  createdPots   Pot[]             @relation("PotCreator")
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String             @unique
+  passwordHash      String             @default("")
+  otpCode           String?
+  otpExpiry         DateTime?
+  isVerified        Boolean            @default(false)
+  balance           Float              @default(0)
+  accountNumber     String?            @unique
+  sortCode          String             @default("30-00-01")
+  createdAt         DateTime           @default(now())
+  pots              PotMember[]
+  transactions      Transaction[]
+  contributions     PotContribution[]
+  createdPots       Pot[]              @relation("PotCreator")
+  potExpenses       PotExpense[]
+  scheduledPayments ScheduledPayment[]
 }
 
 model Pot {
-  id            Int               @id @default(autoincrement())
-  title         String
-  description   String?
-  totalSaved    Float             @default(0)
-  target        Float
-  isActive      Boolean           @default(true)
-  createdAt     DateTime          @default(now())
-  creatorId     Int?
-  creator       User?             @relation("PotCreator", fields: [creatorId], references: [id])
-  members       PotMember[]
-  contributions PotContribution[]
+  id                Int                @id @default(autoincrement())
+  title             String
+  description       String?
+  totalSaved        Float              @default(0)
+  target            Float
+  isActive          Boolean            @default(true)
+  cardNumber        String             @default("")
+  cardExpiry        String             @default("")
+  cardCvv           String             @default("")
+  createdAt         DateTime           @default(now())
+  creatorId         Int?
+  creator           User?              @relation("PotCreator", fields: [creatorId], references: [id])
+  members           PotMember[]
+  contributions     PotContribution[]
+  expenses          PotExpense[]
+  scheduledPayments ScheduledPayment[]
 }
 
 model PotMember {
@@ -59,6 +66,17 @@ model PotContribution {
   pot       Pot      @relation(fields: [potId], references: [id])
 }
 
+model PotExpense {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  description String
+  createdAt   DateTime @default(now())
+  userId      Int
+  potId       Int
+  user        User     @relation(fields: [userId], references: [id])
+  pot         Pot      @relation(fields: [potId], references: [id])
+}
+
 model Transaction {
   id           Int      @id @default(autoincrement())
   amount       Float
@@ -70,4 +88,19 @@ model Transaction {
   createdAt    DateTime @default(now())
   userId       Int
   user         User     @relation(fields: [userId], references: [id])
+}
+
+model ScheduledPayment {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  amount         Float
+  description    String
+  recipientEmail String?
+  potId          Int?
+  sourceType     String
+  scheduledFor   DateTime
+  status         String   @default("PENDING")
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id])
+  pot            Pot?     @relation(fields: [potId], references: [id])
 }
