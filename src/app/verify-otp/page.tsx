@@ -11,6 +11,7 @@ function VerifyForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const email        = searchParams.get("email");
+  const demoOtp      = searchParams.get("otp");
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +60,13 @@ function VerifyForm() {
                 <span className="font-semibold text-gray-800">{email}</span>
               </p>
             </div>
+
+            {demoOtp && (
+              <div className="mb-5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] px-4 py-3 text-sm text-[#166534]">
+                <span className="font-semibold">Demo mode — your code is: </span>
+                <span className="font-mono font-bold tracking-widest text-base">{demoOtp}</span>
+              </div>
+            )}
 
             {error && (
               <div className="mb-5 rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-700">

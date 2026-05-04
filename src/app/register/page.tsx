@@ -29,8 +29,10 @@ export default function RegisterPage() {
       });
 
       if (res.status === 201) {
+        const data = await res.json();
+        const otpParam = data.dev_otp ? `&otp=${encodeURIComponent(data.dev_otp)}` : "";
         setStatus({ type: "success", message: "Account created! Redirecting…" });
-        setTimeout(() => router.push(`/verify-otp?email=${encodeURIComponent(body.email)}`), 1200);
+        setTimeout(() => router.push(`/verify-otp?email=${encodeURIComponent(body.email)}${otpParam}`), 1200);
       } else if (res.status === 409) {
         setStatus({ type: "error", message: "An account with this email already exists." });
         setTimeout(() => router.push("/login"), 2000);
