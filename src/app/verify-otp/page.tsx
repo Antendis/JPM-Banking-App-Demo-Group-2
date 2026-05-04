@@ -63,7 +63,7 @@ function VerifyForm() {
 
             {demoOtp && (
               <div className="mb-5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] px-4 py-3 text-sm text-[#166534]">
-                <span className="font-semibold">Demo mode — your code is: </span>
+                <span className="font-semibold">Demo mode - your code is: </span>
                 <span className="font-mono font-bold tracking-widest text-base">{demoOtp}</span>
               </div>
             )}

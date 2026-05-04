@@ -70,13 +70,13 @@ export default function HomePage() {
                 {/* Mini pot preview */}
                 <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                   <div className="flex justify-between items-center mb-2">
-                    <p className="text-white text-xs font-semibold">House Rent — April</p>
+                    <p className="text-white text-xs font-semibold">House Rent - April</p>
                     <span className="text-emerald-400 text-xs font-bold">✓ Paid</span>
                   </div>
                   <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                     <div className="h-full bg-emerald-400 rounded-full" style={{ width: "100%" }} />
                   </div>
-                  <p className="text-gray-400 text-xs mt-2">£1,800 / £1,800 — 3 members</p>
+                  <p className="text-gray-400 text-xs mt-2">£1,800 / £1,800 · 3 members</p>
                 </div>
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function HomePage() {
               {
                 num: "01",
                 title: "Shared Pots",
-                body: "Pool money with flatmates, friends, or family for rent, bills, holidays — or anything else. Every member contributes on their own terms.",
+                body: "Pool money with flatmates, friends, or family for rent, bills, holidays, or anything else. Every member contributes on their own terms.",
                 accent: "bg-[#f0fdf4]",
               },
               {
@@ -111,7 +111,7 @@ export default function HomePage() {
               {
                 num: "03",
                 title: "Spending Insights",
-                body: "See exactly where your money goes — groceries, eating out, bills — broken down clearly every month.",
+                body: "See exactly where your money goes: groceries, eating out, bills, broken down clearly every month.",
                 accent: "bg-white",
               },
             ].map(({ num, title, body, accent }) => (
@@ -156,7 +156,7 @@ export default function HomePage() {
               href="/register"
               className="inline-flex items-center gap-2 bg-[#1a6e3f] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#0d3d22] transition-all shadow-lg shadow-green-900/20 hover:shadow-none"
             >
-              Get started — it's free
+              Get started - it's free
               <span aria-hidden>→</span>
             </Link>
           </div>
@@ -180,7 +180,7 @@ export default function HomePage() {
           </div>
           <div className="text-right text-xs text-gray-600 space-y-1">
             <p>© 2026 OnePot Banking. All rights reserved.</p>
-            <p className="italic">Demo application — not a real bank. Educational purposes only.</p>
+            <p className="italic">Demo application. Not a real bank. Educational purposes only.</p>
           </div>
         </div>
       </footer>

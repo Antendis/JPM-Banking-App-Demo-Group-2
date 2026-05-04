@@ -17,8 +17,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "OnePot — Banking for Shared Lives",
-  description: "One account. Shared pots. Zero friction.",
+  title: "OnePot | Banking for Shared Lives",
+  description: "One account. Shared pots.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

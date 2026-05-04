@@ -258,7 +258,7 @@ export default function PotsPage() {
             </div>
             <form onSubmit={handleCreate} className="px-6 py-5 space-y-4">
               {[
-                { name: "title",       label: "Pot name",      type: "text",   placeholder: "House Rent — May" },
+                { name: "title",       label: "Pot name",      type: "text",   placeholder: "House Rent - May" },
                 { name: "description", label: "Description",   type: "text",   placeholder: "Optional note…" },
                 { name: "target",      label: "Target (£)",    type: "number", placeholder: "1800" },
               ].map(({ name, label, type, placeholder }) => (
