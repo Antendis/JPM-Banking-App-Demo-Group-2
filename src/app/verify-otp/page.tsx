@@ -2,14 +2,15 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 function VerifyForm() {
-  const [otp, setOtp] = useState("");
-  const [error, setError] = useState("");
+  const [otp, setOtp]         = useState("");
+  const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const router       = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const email        = searchParams.get("email");
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,13 +25,12 @@ function VerifyForm() {
       });
 
       if (res.ok) {
-        // Success! The API has set your cookie. Now go to dashboard.
         router.push("/dashboard");
       } else {
         const data = await res.json();
-        setError(data.message || "Invalid code");
+        setError(data.message || "Invalid code.");
       }
-    } catch (err) {
+    } catch {
       setError("Something went wrong. Try again.");
     } finally {
       setLoading(false);
@@ -38,39 +38,59 @@ function VerifyForm() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black p-4">
-      <div className="w-full max-w-md p-8 border border-gray-200 rounded-2xl shadow-sm">
-        <h1 className="text-2xl font-bold text-blue-900 mb-2">
-          Verify your account
-        </h1>
-        <p className="text-gray-500 mb-6">
-          Enter the code sent to{" "}
-          <span className="font-semibold text-black">{email}</span>
-        </p>
+    <div className="flex min-h-[calc(100vh-57px)] items-center justify-center bg-[#faf8f3] px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="h-1.5 bg-[#1a6e3f]" />
+          <div className="p-8">
+            <div className="mb-8 text-center">
+              <Link href="/" className="inline-flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-[#1a6e3f] flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 11h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9z"/>
+                    <path d="M8 11V7a4 4 0 018 0v4"/>
+                  </svg>
+                </div>
+                <span className="font-bold text-gray-900">One<span className="text-[#1a6e3f]">Pot</span></span>
+              </Link>
+              <h1 className="text-xl font-bold text-gray-900">Verify your account</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                Enter the 6-digit code sent to<br />
+                <span className="font-semibold text-gray-800">{email}</span>
+              </p>
+            </div>
 
-        {error && (
-          <p className="text-red-500 text-sm mb-4 bg-red-50 p-2 rounded">
-            {error}
-          </p>
-        )}
+            {error && (
+              <div className="mb-5 rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
 
-        <form onSubmit={handleVerify} className="space-y-4">
-          <input
-            type="text"
-            placeholder="000000"
-            className="w-full p-4 text-center text-3xl tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            maxLength={6}
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-            required
-          />
-          <button
-            disabled={loading || otp.length < 6}
-            className="w-full bg-blue-900 text-white p-4 rounded-lg font-semibold hover:bg-blue-800 transition-colors disabled:opacity-50"
-          >
-            {loading ? "Verifying..." : "Verify & Log In"}
-          </button>
-        </form>
+            <form onSubmit={handleVerify} className="space-y-4">
+              <input
+                type="text"
+                placeholder="000000"
+                className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-center text-3xl tracking-[0.5em] font-mono outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all"
+                maxLength={6}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                required
+                autoFocus
+              />
+              <button
+                type="submit"
+                disabled={loading || otp.length < 6}
+                className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer"
+              >
+                {loading ? "Verifying…" : "Verify & continue"}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-5 border-t border-gray-100 text-center text-sm text-gray-500">
+              <Link href="/login" className="text-[#1a6e3f] hover:underline">← Back to login</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -78,7 +98,7 @@ function VerifyForm() {
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading…</div>}>
       <VerifyForm />
     </Suspense>
   );
