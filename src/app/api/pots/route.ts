@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 
+function generateCard() {
+  const digits = [4, ...Array.from({ length: 15 }, () => Math.floor(Math.random() * 10))];
+  const number = digits.join("");
+  const now = new Date();
+  const expMonth = String(now.getMonth() + 1).padStart(2, "0");
+  const expYear = String(now.getFullYear() + 3).slice(-2);
+  const cvv = String(Math.floor(Math.random() * 900) + 100);
+  return { cardNumber: number, cardExpiry: `${expMonth}/${expYear}`, cardCvv: cvv };
+}
+
 export async function GET() {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ message: "Unauthorised." }, { status: 401 });
@@ -13,6 +23,7 @@ export async function GET() {
         include: {
           members: { include: { user: { select: { id: true, name: true } } } },
           contributions: true,
+          expenses: true,
           creator: { select: { id: true, name: true } },
         },
       },
@@ -36,6 +47,7 @@ export async function GET() {
       }));
 
       const totalSaved = pot.contributions.reduce((s, c) => s + c.amount, 0);
+      const totalSpent = pot.expenses.reduce((s, e) => s + e.amount, 0);
 
       return {
         id: pot.id,
@@ -43,8 +55,13 @@ export async function GET() {
         description: pot.description,
         target: pot.target,
         totalSaved,
+        totalSpent,
+        availableBalance: totalSaved - totalSpent,
         myContribution,
         memberTotals,
+        cardNumber: pot.cardNumber,
+        cardExpiry: pot.cardExpiry,
+        cardCvv: pot.cardCvv,
         creatorId: pot.creatorId,
         creatorName: pot.creator?.name ?? null,
         isCreator: pot.creatorId === user.id,
@@ -59,6 +76,13 @@ export async function POST(req: NextRequest) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ message: "Unauthorised." }, { status: 401 });
 
+  const activeMembershipCount = await prisma.potMember.count({
+    where: { userId: user.id, pot: { isActive: true } },
+  });
+  if (activeMembershipCount >= 5) {
+    return NextResponse.json({ message: "You can be a member of at most 5 active pots." }, { status: 400 });
+  }
+
   const { title, description, target, memberIds } = await req.json();
 
   if (!title || !target || target <= 0) {
@@ -69,12 +93,17 @@ export async function POST(req: NextRequest) {
     (id, idx, arr) => arr.indexOf(id) === idx
   );
 
+  const card = generateCard();
+
   const pot = await prisma.pot.create({
     data: {
       title,
       description: description ?? null,
       target,
       creatorId: user.id,
+      cardNumber: card.cardNumber,
+      cardExpiry: card.cardExpiry,
+      cardCvv: card.cardCvv,
       members: {
         create: allMemberIds.map((id) => ({ userId: id })),
       },
