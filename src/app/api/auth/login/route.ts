@@ -46,14 +46,8 @@ export async function POST(req: NextRequest) {
   // In production: send OTP via email. For now it prints to the dev console.
   console.log(`\n[DEV] OTP for ${email}: ${otp}\n`);
 
-  const body: { message: string; dev_otp?: string } = {
-    message: "Verification code sent to your email.",
-  };
-
-  // Expose OTP in response body only in development so you can test without email
-  if (process.env.NODE_ENV !== "production") {
-    body.dev_otp = otp;
-  }
-
-  return NextResponse.json(body, { status: 200 });
+  return NextResponse.json(
+    { message: "Verification code sent to your email.", dev_otp: otp },
+    { status: 200 }
+  );
 }

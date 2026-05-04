@@ -5,63 +5,38 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [status, setStatus] = useState<{
-    type: "error" | "success" | "";
-    message: string;
-  }>({
-    type: "",
-    message: "",
-  });
   const [loading, setLoading] = useState(false);
+  const [status, setStatus]   = useState<{ type: "error" | "success" | ""; message: string }>({ type: "", message: "" });
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus({ type: "", message: "" });
     setLoading(true);
+    setStatus({ type: "", message: "" });
+
+    const form = new FormData(e.currentTarget);
+    const body = {
+      name:     form.get("name") as string,
+      email:    form.get("email") as string,
+      password: form.get("password") as string,
+    };
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(body),
       });
 
-      if (response.status === 201) {
-        setStatus({
-          type: "success",
-          message: "Account created! Check your email for the code.",
-        });
-        // Give the user a moment to read the success message before redirecting
-        setTimeout(() => {
-          router.push(
-            `/verify-otp?email=${encodeURIComponent(formData.email)}`,
-          );
-        }, 1500);
-      } else if (response.status === 409) {
-        setStatus({
-          type: "error",
-          message:
-            "An account already exists with this email. Redirecting to login...",
-        });
-        setTimeout(() => {
-          router.push("/login");
-        }, 2500);
+      if (res.status === 201) {
+        setStatus({ type: "success", message: "Account created! Redirecting…" });
+        setTimeout(() => router.push(`/verify-otp?email=${encodeURIComponent(body.email)}`), 1200);
+      } else if (res.status === 409) {
+        setStatus({ type: "error", message: "An account with this email already exists." });
+        setTimeout(() => router.push("/login"), 2000);
       } else {
-        const data = await response.json();
-        setStatus({
-          type: "error",
-          message: data.message || "Registration failed.",
-        });
+        const data = await res.json();
+        setStatus({ type: "error", message: data.message || "Registration failed." });
       }
     } catch {
       setStatus({ type: "error", message: "Network error. Please try again." });
@@ -71,95 +46,73 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
-      <div className="w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-900 mb-2">OnePot Bank</h1>
-          <p className="text-gray-500 font-medium">Secure Personal Banking</p>
-        </div>
+    <div className="flex min-h-[calc(100vh-57px)] items-center justify-center bg-[#faf8f3] px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="h-1.5 bg-[#1a6e3f]" />
+          <div className="p-8">
+            <div className="mb-8 text-center">
+              <Link href="/" className="inline-flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-[#1a6e3f] flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 11h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9z"/>
+                    <path d="M8 11V7a4 4 0 018 0v4"/>
+                  </svg>
+                </div>
+                <span className="font-bold text-gray-900">One<span className="text-[#1a6e3f]">Pot</span></span>
+              </Link>
+              <h1 className="text-xl font-bold text-gray-900">Open your account</h1>
+              <p className="text-sm text-gray-500 mt-1">Takes under two minutes</p>
+            </div>
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-6">
-          Create your account
-        </h2>
+            {status.message && (
+              <div className={`mb-5 rounded-xl px-4 py-3 text-sm border ${
+                status.type === "success"
+                  ? "bg-[#f0fdf4] border-[#bbf7d0] text-[#166534]"
+                  : "bg-red-50 border-red-100 text-red-700"
+              }`}>
+                {status.message}
+              </div>
+            )}
 
-        {status.message && (
-          <div
-            className={`p-4 rounded-lg mb-6 text-sm font-medium animate-pulse ${
-              status.type === "success"
-                ? "bg-green-50 text-green-700 border border-green-100"
-                : "bg-red-50 text-red-700 border border-red-100"
-            }`}
-          >
-            {status.message}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {[
+                { name: "name",     label: "Full name",      type: "text",     placeholder: "Jane Smith",         autoComplete: "name" },
+                { name: "email",    label: "Email address",  type: "email",    placeholder: "you@example.com",    autoComplete: "email" },
+                { name: "password", label: "Password",       type: "password", placeholder: "Min. 8 characters",  autoComplete: "new-password" },
+              ].map(({ name, label, type, placeholder, autoComplete }) => (
+                <div key={name}>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                    {label}
+                  </label>
+                  <input
+                    name={name}
+                    type={type}
+                    required
+                    minLength={name === "password" ? 8 : undefined}
+                    autoComplete={autoComplete}
+                    placeholder={placeholder}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all"
+                  />
+                </div>
+              ))}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer mt-2"
+              >
+                {loading ? "Creating account…" : "Create account"}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-5 border-t border-gray-100 text-center text-sm text-gray-500">
+              Already have an account?{" "}
+              <Link href="/login" className="text-[#1a6e3f] font-semibold hover:underline">
+                Log in
+              </Link>
+            </div>
           </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              required
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all text-black"
-              placeholder="e.g. Jovarie Smith"
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all text-black"
-              placeholder="name@example.com"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              required
-              minLength={8}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all text-black"
-              placeholder="Min. 8 characters"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 px-4 bg-blue-900 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-800 hover:shadow-none active:scale-95 transition-all disabled:opacity-50"
-          >
-            {loading ? "Establishing Secure Connection..." : "Create Account"}
-          </button>
-        </form>
-
-        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-          <p className="text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-bold text-blue-600 hover:text-blue-500 transition-colors"
-            >
-              Log in here
-            </Link>
-          </p>
         </div>
       </div>
     </div>
