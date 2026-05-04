@@ -85,7 +85,7 @@ export default function ScheduledPage() {
         body: JSON.stringify({
           sourceType: form.sourceType,
           potId: form.sourceType === "POT" ? parseInt(form.potId, 10) : undefined,
-          recipientEmail: form.sourceType === "ACCOUNT" ? form.recipientEmail : undefined,
+          recipientEmail: form.recipientEmail || undefined,
           amount: parseFloat(form.amount),
           description: form.description,
           scheduledFor: form.scheduledFor,
@@ -172,9 +172,14 @@ export default function ScheduledPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm truncate">{p.description}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {p.sourceType === "POT" ? `From pot: ${p.pot?.title ?? "—"}` : `To: ${p.recipientEmail ?? "—"}`}
-                    </p>
+                    {p.sourceType === "POT" ? (
+                      <>
+                        <p className="text-xs text-gray-400 mt-0.5">From pot: {p.pot?.title ?? "—"}</p>
+                        {p.recipientEmail && <p className="text-xs text-gray-400">To: {p.recipientEmail}</p>}
+                      </>
+                    ) : (
+                      <p className="text-xs text-gray-400 mt-0.5">To: {p.recipientEmail ?? "—"}</p>
+                    )}
                     <p className="text-xs text-gray-400">Due: {fmtDateTime(p.scheduledFor)}</p>
                   </div>
                   <div className="text-right shrink-0">
@@ -202,7 +207,9 @@ export default function ScheduledPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm truncate">{p.description}</p>
                     <p className="text-xs text-gray-400">
-                      {p.sourceType === "POT" ? `Pot: ${p.pot?.title ?? "—"}` : `To: ${p.recipientEmail ?? "—"}`}
+                      {p.sourceType === "POT"
+                        ? `Pot: ${p.pot?.title ?? "—"}${p.recipientEmail ? ` → ${p.recipientEmail}` : ""}`
+                        : `To: ${p.recipientEmail ?? "—"}`}
                       &nbsp;&middot;&nbsp;{fmtDate(p.scheduledFor)}
                     </p>
                   </div>
@@ -268,18 +275,20 @@ export default function ScheduledPage() {
                 </div>
               )}
 
-              {/* Recipient email (account only) */}
-              {form.sourceType === "ACCOUNT" && (
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Recipient email</label>
-                  <input
-                    type="email" required placeholder="friend@onepot.com"
-                    value={form.recipientEmail}
-                    onChange={(e) => setForm((f) => ({ ...f, recipientEmail: e.target.value }))}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all"
-                  />
-                </div>
-              )}
+              {/* Recipient email — required for account, optional for pot */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Recipient email{form.sourceType === "POT" && <span className="text-gray-300 normal-case font-normal ml-1">(optional — credits them if on OnePot)</span>}
+                </label>
+                <input
+                  type="email"
+                  required={form.sourceType === "ACCOUNT"}
+                  placeholder="friend@onepot.com"
+                  value={form.recipientEmail}
+                  onChange={(e) => setForm((f) => ({ ...f, recipientEmail: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all"
+                />
+              </div>
 
               {/* Amount */}
               <div>
