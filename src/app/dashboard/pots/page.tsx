@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useDelayedLoading } from "@/lib/useDelayedLoading";
 
 interface MemberTotal {
   userId: number;
@@ -62,6 +63,12 @@ export default function PotsPage() {
   const [dissolving, setDissolving] = useState(false);
   const [leaving, setLeaving]       = useState(false);
   const [spending, setSpending]     = useState(false);
+
+  const spinCreate   = useDelayedLoading(creating);
+  const spinContrib  = useDelayedLoading(contributing);
+  const spinDissolve = useDelayedLoading(dissolving);
+  const spinLeave    = useDelayedLoading(leaving);
+  const spinSpend    = useDelayedLoading(spending);
 
   const [contAmount, setContAmount]   = useState("");
   const [spendAmount, setSpendAmount] = useState("");
@@ -454,7 +461,8 @@ export default function PotsPage() {
                   Cancel
                 </button>
                 <button type="submit" disabled={creating}
-                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer">
+                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer flex items-center justify-center gap-1.5">
+                  {spinCreate && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {creating ? "Creating…" : "Create pot"}
                 </button>
               </div>
@@ -486,7 +494,8 @@ export default function PotsPage() {
                   Cancel
                 </button>
                 <button type="submit" disabled={contributing || !contAmount}
-                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer">
+                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer flex items-center justify-center gap-1.5">
+                  {spinContrib && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {contributing ? "Adding…" : "Confirm"}
                 </button>
               </div>
@@ -528,7 +537,8 @@ export default function PotsPage() {
                   Cancel
                 </button>
                 <button type="submit" disabled={spending || !spendAmount || !spendDesc}
-                  className="flex-1 py-2.5 rounded-2xl bg-[#0e1c2f] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-60 cursor-pointer">
+                  className="flex-1 py-2.5 rounded-2xl bg-[#0e1c2f] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-60 cursor-pointer flex items-center justify-center gap-1.5">
+                  {spinSpend && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {spending ? "Processing…" : "Pay now"}
                 </button>
               </div>
@@ -558,7 +568,8 @@ export default function PotsPage() {
                 Stay
               </button>
               <button onClick={handleLeave} disabled={leaving}
-                className="flex-1 py-2.5 rounded-2xl bg-gray-700 text-white text-sm font-semibold hover:bg-gray-900 transition-colors disabled:opacity-60 cursor-pointer">
+                className="flex-1 py-2.5 rounded-2xl bg-gray-700 text-white text-sm font-semibold hover:bg-gray-900 transition-colors disabled:opacity-60 cursor-pointer flex items-center justify-center gap-1.5">
+                {spinLeave && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                 {leaving ? "Leaving…" : "Leave pot"}
               </button>
             </div>
@@ -585,7 +596,8 @@ export default function PotsPage() {
                 Keep pot
               </button>
               <button onClick={handleDissolve} disabled={dissolving}
-                className="flex-1 py-2.5 rounded-2xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-60 cursor-pointer">
+                className="flex-1 py-2.5 rounded-2xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-60 cursor-pointer flex items-center justify-center gap-1.5">
+                {spinDissolve && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                 {dissolving ? "Dissolving…" : "Dissolve & refund"}
               </button>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useDelayedLoading } from "@/lib/useDelayedLoading";
 
 type Status = { type: "success" | "error" | ""; message: string };
 
@@ -9,6 +10,7 @@ export default function SendPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus]   = useState<Status>({ type: "", message: "" });
   const [done, setDone]       = useState(false);
+  const spinner = useDelayedLoading(loading);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -135,8 +137,9 @@ export default function SendPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer mt-2"
+                className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer mt-2 flex items-center justify-center gap-2"
               >
+                {spinner && <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                 {loading ? "Sending…" : "Send money"}
               </button>
 
