@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push --accept-data-loss && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -13,6 +13,7 @@
     "@prisma/adapter-neon": "^7.8.0",
     "@prisma/client": "^7.7.0",
     "bcryptjs": "^3.0.3",
+    "framer-motion": "^11.18.2",
     "next": "^16.2.4",
     "postcss": "^8.5.10",
     "react": "^19.0.0",
