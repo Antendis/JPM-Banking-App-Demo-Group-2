@@ -65,13 +65,13 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
   );
 
   const plants = [
-    // 0 — Monstera: two broad sweeping leaves + stem
+    // monstera
     <g key="monstera">
       <path d="M16 23V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       <path d="M16 17C13 15.5 9 10 11 5C12.5 1.5 16.5 3.5 16 12" fill="currentColor" opacity="0.9"/>
       <path d="M16 17C19 15.5 23 10 21 5C19.5 1.5 15.5 3.5 16 12" fill="currentColor" opacity="0.7"/>
     </g>,
-    // 1 — Cactus: rounded body with two arms
+    // cactus
     <g key="cactus">
       <rect x="13" y="6" width="6" height="17" rx="3" fill="currentColor"/>
       <rect x="7"  y="10" width="7" height="5"  rx="2.5" fill="currentColor" opacity="0.85"/>
@@ -79,7 +79,7 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
       <rect x="6"  y="9"  width="2" height="7"  rx="1"   fill="currentColor"/>
       <rect x="24" y="12" width="2" height="7"  rx="1"   fill="currentColor"/>
     </g>,
-    // 2 — Fern/Palm: arching fronds with leaf tips
+    // fern
     <g key="fern">
       <path d="M16 23V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       <path d="M16 16C13 13 8  7 11 3"  stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" fill="none"/>
@@ -91,7 +91,7 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
       <circle cx="13" cy="9"  r="1.5" fill="currentColor"/>
       <circle cx="19" cy="9"  r="1.5" fill="currentColor"/>
     </g>,
-    // 3 — Succulent: fat rosette of ellipse leaves
+    // succulent
     <g key="succulent">
       <ellipse cx="16" cy="18" rx="4"   ry="5.5" fill="currentColor"/>
       <ellipse cx="10" cy="20" rx="3"   ry="5"   fill="currentColor" opacity="0.8" transform="rotate(-25 10 20)"/>
@@ -99,7 +99,7 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
       <ellipse cx="7"  cy="21" rx="2.5" ry="4"   fill="currentColor" opacity="0.6" transform="rotate(-40 7 21)"/>
       <ellipse cx="25" cy="21" rx="2.5" ry="4"   fill="currentColor" opacity="0.6" transform="rotate(40 25 21)"/>
     </g>,
-    // 4 — Snake plant: three tall pointed blades
+    // snake plant
     <g key="snake">
       <path d="M16 23 L14.5 7C14.5 5.5 15.2 4.5 16 4.5C16.8 4.5 17.5 5.5 17.5 7Z" fill="currentColor"/>
       <path d="M11 23 L10 12C10 10.5 10.8 9.5 11.8 10.5C12.5 11.5 12.5 14 11 23Z" fill="currentColor" opacity="0.8"/>

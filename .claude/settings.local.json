@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew install *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(kill 17784)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Read(//Users/jovarie/Documents/JPM-Banking-App-Demo-Group-2/**)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"test@test.com\",\"password\":\"test\"}' -w '\\\\nHTTP Status: %{http_code}')",
+      "Bash(git checkout *)",
+      "Bash(git push *)"
+    ]
+  }
+}

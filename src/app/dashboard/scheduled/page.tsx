@@ -278,7 +278,7 @@ export default function ScheduledPage() {
               {/* Recipient email — required for account, optional for pot */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Recipient email{form.sourceType === "POT" && <span className="text-gray-300 normal-case font-normal ml-1">(optional — credits them if on OnePot)</span>}
+                  Recipient email{form.sourceType === "POT" && <span className="text-gray-300 normal-case font-normal ml-1">(optional, credits them if on OnePot)</span>}
                 </label>
                 <input
                   type="email"

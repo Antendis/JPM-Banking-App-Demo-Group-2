@@ -4,23 +4,19 @@ import Image from "next/image";
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#fdfcf9] overflow-x-hidden">
-      {/* ────────────────────────── HERO ────────────────────────── */}
       <section className="relative min-h-[700px] flex items-center overflow-hidden px-6 py-20">
-        {/* The Illustration Background */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/hero.png"
-            alt="Hero Background"
+            alt=""
             fill
             className="object-cover object-right-bottom opacity-30 md:opacity-100"
             priority
           />
-          {/* Gradient Overlay to ensure text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#fdfcf9] via-[#fdfcf9]/90 to-transparent md:via-[#fdfcf9]/40" />
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
-          {/* Left Side: Copy */}
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 mb-6 bg-[#1a6e3f]/10 px-3 py-1 rounded-full">
               <span className="w-2 h-2 rounded-full bg-[#1a6e3f]" />
@@ -58,7 +54,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right Side: Floating Balance Card */}
           <div className="hidden md:flex justify-end pr-10">
             <div className="relative bg-[#0e1c2f] rounded-[2.5rem] p-9 w-[360px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] animate-float border border-white/5">
               <p className="text-gray-500 text-xs uppercase tracking-widest mb-4 font-medium">
@@ -120,7 +115,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ────────────────────────── FEATURES ────────────────────────── */}
       <section className="bg-white py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="mb-14">
@@ -169,7 +163,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ────────────────────────── FOOTER ────────────────────────── */}
       <footer className="bg-[#0d3d22] text-gray-400 py-14 px-6 mt-auto">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
