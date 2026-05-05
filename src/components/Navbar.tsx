@@ -8,19 +8,43 @@ const DASHBOARD_ROUTES = ["/dashboard"];
 
 function PotIcon() {
   return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 11h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9z" />
-      <path d="M8 11V7a4 4 0 018 0v4" />
-    </svg>
+    <div className="w-9 h-9 rounded-lg bg-[#1a6e3f] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M6 10H18L16.5 21H7.5L6 10Z"
+          fill="white"
+          stroke="white"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12 10V7"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M12 7C12 7 8 7 8 4C8 2.5 10 2.5 12 5"
+          stroke="white"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12 7C12 7 16 7 16 4C16 2.5 14 2.5 12 5"
+          stroke="white"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
   );
 }
 
@@ -46,23 +70,19 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Desktop / top navbar ── */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-5 py-3 flex justify-between items-center">
-          {/* Logo */}
+          {/* Logo Section */}
           <Link
             href={isDashboard ? "/dashboard" : "/"}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-3 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#1a6e3f] flex items-center justify-center text-white">
-              <PotIcon />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-gray-900">
+            <PotIcon />
+            <span className="text-2xl font-bold tracking-tight text-gray-900">
               One<span className="text-[#1a6e3f]">Pot</span>
             </span>
           </Link>
 
-          {/* Authenticated nav */}
           {isDashboard ? (
             <div className="hidden sm:flex items-center gap-1 text-sm">
               {[
@@ -88,7 +108,6 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            /* Public nav */
             <div className="flex items-center gap-2 text-sm">
               <Link
                 href="/login"
@@ -107,7 +126,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ── Mobile bottom tab bar (dashboard only) ── */}
+      {/* Mobile Nav stays same */}
       {isDashboard && (
         <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 safe-area-inset-bottom">
           <div className="grid grid-cols-5 h-16">
@@ -146,33 +165,6 @@ export default function Navbar() {
             )}
           </div>
         </nav>
-      )}
-
-      {/* Mobile "More" sheet */}
-      {menuOpen && isDashboard && (
-        <div
-          className="sm:hidden fixed inset-0 z-40 bg-black/40"
-          onClick={() => setMenuOpen(false)}
-        >
-          <div
-            className="absolute bottom-16 left-0 right-0 bg-white rounded-t-2xl p-4 space-y-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Link
-              href="/dashboard/statements"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 text-sm font-medium text-gray-700"
-            >
-              Statements
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 text-sm font-medium text-red-600"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
       )}
     </>
   );
