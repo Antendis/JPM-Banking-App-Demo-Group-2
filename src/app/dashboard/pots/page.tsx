@@ -19,6 +19,7 @@ interface Pot {
   availableBalance: number;
   myContribution: number;
   memberTotals: MemberTotal[];
+  sparkline: number[];
   cardNumber: string;
   cardExpiry: string;
   cardCvv: string;
@@ -38,7 +39,8 @@ function fmtCard(num: string) {
   return num.replace(/(.{4})/g, "$1 ").trim();
 }
 
-const PROGRESS_COLORS = ["bg-emerald-500", "bg-teal-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-blue-500"];
+const PROGRESS_COLORS   = ["bg-emerald-500", "bg-teal-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-blue-500"];
+const SPARKLINE_COLORS  = ["#10b981",        "#14b8a6",    "#8b5cf6",       "#f59e0b",       "#f43f5e",     "#3b82f6"   ];
 const BUTTON_COLORS   = ["bg-emerald-600 hover:bg-emerald-700", "bg-teal-600 hover:bg-teal-700", "bg-violet-600 hover:bg-violet-700", "bg-amber-500 hover:bg-amber-600", "bg-rose-600 hover:bg-rose-700", "bg-blue-600 hover:bg-blue-700"];
 const PLANT_COLORS    = [
   { bg: "bg-emerald-50",  icon: "text-emerald-600" },
@@ -111,6 +113,45 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
     <svg viewBox="0 0 32 32" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
       {plants[index % plants.length]}
       {pot}
+    </svg>
+  );
+}
+
+function SparkLine({ data, color, id }: { data: number[]; color: string; id: string }) {
+  if (data.length < 2) return null;
+
+  const W = 300;
+  const H = 36;
+  const max = Math.max(...data);
+  if (max === 0) return null;
+
+  const pts = data.map((v, i) => ({
+    x: (i / (data.length - 1)) * W,
+    y: H - (v / max) * (H * 0.85),
+  }));
+
+  const line = pts
+    .map((p, i) => {
+      if (i === 0) return `M ${p.x} ${p.y}`;
+      const prev = pts[i - 1];
+      const cpx = (prev.x + p.x) / 2;
+      return `C ${cpx} ${prev.y} ${cpx} ${p.y} ${p.x} ${p.y}`;
+    })
+    .join(" ");
+
+  const area = `${line} L ${pts[pts.length - 1].x} ${H} L ${pts[0].x} ${H} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-9" preserveAspectRatio="none" aria-hidden>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.18" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill={`url(#${id})`} />
+      <path d={line} stroke={color} strokeWidth="1.75" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="2.5" fill={color} />
     </svg>
   );
 }
@@ -387,6 +428,13 @@ export default function PotsPage() {
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div className={`${barColor} h-full rounded-full transition-all`} style={{ width: `${progress}%` }} />
               </div>
+
+              {/* Sparkline */}
+              <SparkLine
+                data={pot.sparkline}
+                color={SPARKLINE_COLORS[idx % SPARKLINE_COLORS.length]}
+                id={`spark-${pot.id}`}
+              />
 
               {/* Virtual card */}
               {cardShown && (

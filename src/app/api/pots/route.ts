@@ -49,6 +49,11 @@ export async function GET() {
       const totalSaved = pot.contributions.reduce((s, c) => s + c.amount, 0);
       const totalSpent = pot.expenses.reduce((s, e) => s + e.amount, 0);
 
+      const sparkline = pot.contributions
+        .slice()
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+        .reduce<number[]>((acc, c) => [...acc, (acc[acc.length - 1] ?? 0) + c.amount], [0]);
+
       return {
         id: pot.id,
         title: pot.title,
@@ -59,6 +64,7 @@ export async function GET() {
         availableBalance: totalSaved - totalSpent,
         myContribution,
         memberTotals,
+        sparkline,
         cardNumber: pot.cardNumber,
         cardExpiry: pot.cardExpiry,
         cardCvv: pot.cardCvv,
