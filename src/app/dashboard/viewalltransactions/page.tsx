@@ -81,7 +81,6 @@ export default function ViewAllTransactionsPage() {
   const [transactions, setTxs]   = useState<Transaction[]>([]);
   const [loading, setLoading]    = useState(true);
   const [filter, setFilter]      = useState("ALL");
-  const [search, setSearch]      = useState("");
   const [selected, setSelected]  = useState<Transaction | null>(null);
 
   useEffect(() => {
@@ -99,11 +98,7 @@ export default function ViewAllTransactionsPage() {
     );
   }
 
-  const q = search.trim().toLowerCase();
-  const filtered = transactions
-    .filter((t) => filter === "ALL" || t.category === filter)
-    .filter((t) => !q || [t.description, t.counterparty, t.reference, t.category]
-      .some((f) => f?.toLowerCase().includes(q)));
+  const filtered = filter === "ALL" ? transactions : transactions.filter((t) => t.category === filter);
   const totalIn  = transactions.filter((t) => t.type === "CREDIT").reduce((s, t) => s + t.amount, 0);
   const totalOut = transactions.filter((t) => t.type === "DEBIT").reduce((s, t) => s + t.amount, 0);
   const net      = totalIn - totalOut;
@@ -137,24 +132,6 @@ export default function ViewAllTransactionsPage() {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">🔍</span>
-          <input
-            type="text"
-            placeholder="Search transactions…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all shadow-sm"
-          />
-          {search && (
-            <button onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none cursor-pointer">
-              ×
-            </button>
-          )}
-        </div>
-
         {/* Filter pills */}
         <div className="flex flex-wrap gap-2">
           {categories.map((cat) => {
@@ -185,9 +162,7 @@ export default function ViewAllTransactionsPage() {
           </div>
 
           {filtered.length === 0 ? (
-            <p className="px-5 pb-5 text-sm text-gray-400">
-              {q ? `No transactions matching "${search}".` : "No transactions in this category."}
-            </p>
+            <p className="px-5 pb-5 text-sm text-gray-400">No transactions in this category.</p>
           ) : (
             <ul className="divide-y divide-gray-50">
               {filtered.map((tx) => {
