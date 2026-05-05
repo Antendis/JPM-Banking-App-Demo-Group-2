@@ -5,7 +5,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#fdfcf9] overflow-x-hidden">
       {/* ────────────────────────── HERO ────────────────────────── */}
-      <section className="relative min-h-700px flex items-center overflow-hidden px-6 py-20">
+      <section className="relative min-h-[700px] flex items-center overflow-hidden px-6 py-20">
         {/* The Illustration Background */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -60,7 +60,7 @@ export default function HomePage() {
 
           {/* Right Side: Floating Balance Card */}
           <div className="hidden md:flex justify-end pr-10">
-            <div className="relative bg-[#0e1c2f] rounded-[2.5rem] p-9 w-360px shadow-[0_30px_60px_rgba(0,0,0,0.4)] animate-float border border-white/5">
+            <div className="relative bg-[#0e1c2f] rounded-[2.5rem] p-9 w-[360px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] animate-float border border-white/5">
               <p className="text-gray-500 text-xs uppercase tracking-widest mb-4 font-medium">
                 Available balance
               </p>
