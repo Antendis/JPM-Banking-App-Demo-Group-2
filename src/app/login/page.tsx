@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [step, setStep]         = useState<1 | 2>(1);
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState<string | null>(null);
-  const [email, setEmail]       = useState("");
-  const [demoOtp, setDemoOtp]   = useState<string | null>(null);
+  const [step, setStep]               = useState<1 | 2>(1);
+  const [loading, setLoading]         = useState(false);
+  const [error, setError]             = useState<string | null>(null);
+  const [email, setEmail]             = useState("");
+  const [demoOtp, setDemoOtp]         = useState<string | null>(null);
+  const [forgotShown, setForgotShown] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -158,6 +159,21 @@ export default function LoginPage() {
                 >
                   {loading ? "Signing in…" : "Sign in"}
                 </button>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setForgotShown((v) => !v)}
+                    className="text-sm text-gray-400 hover:text-[#1a6e3f] transition-colors cursor-pointer"
+                  >
+                    Forgot your password?
+                  </button>
+                  {forgotShown && (
+                    <div className="mt-3 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-700">
+                      Password reset is not available in this demo. Please contact your account administrator.
+                    </div>
+                  )}
+                </div>
               </form>
             ) : (
               <form onSubmit={handleOtp} className="space-y-5">

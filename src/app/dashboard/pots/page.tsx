@@ -168,6 +168,9 @@ export default function PotsPage() {
   const [spendTarget, setSpendTarget]       = useState<Pot | null>(null);
   const [managePotId, setManagePotId]       = useState<number | null>(null);
 
+  const [dissolveOtp, setDissolveOtp]             = useState<string | null>(null);
+  const [dissolveOtpInput, setDissolveOtpInput]   = useState("");
+
   const [creating, setCreating]     = useState(false);
   const [contributing, setContrib]  = useState(false);
   const [dissolving, setDissolving] = useState(false);
@@ -195,7 +198,7 @@ export default function PotsPage() {
     });
 
   const loadPots = () =>
-    fetch("/api/pots").then((r) => r.json()).then((d) => {
+    fetch("/api/pots", { cache: "no-store" }).then((r) => r.json()).then((d) => {
       setPots(Array.isArray(d) ? d : []);
       setLoading(false);
     });
@@ -419,7 +422,11 @@ export default function PotsPage() {
                     </button>
                   </div>
                   <p className="text-sm font-semibold text-gray-500 tabular-nums mt-1">
-                    {fmt(pot.totalSaved)} saved &middot; {fmt(pot.target)} target
+                    {fmt(pot.totalSaved)} saved &middot;{" "}
+                    {pot.totalSpent > 0 && (
+                      <span className="text-rose-500">{fmt(pot.availableBalance)} available &middot; </span>
+                    )}
+                    {fmt(pot.target)} target
                   </p>
                 </div>
               </div>
@@ -521,7 +528,13 @@ export default function PotsPage() {
                       <div className="border-t border-gray-100 mx-3" />
                       {pot.isCreator ? (
                         <button
-                          onClick={() => { setDissolveTarget(pot); setManagePotId(null); }}
+                          onClick={() => {
+                            const otp = String(Math.floor(100000 + Math.random() * 900000));
+                            setDissolveOtp(otp);
+                            setDissolveOtpInput("");
+                            setDissolveTarget(pot);
+                            setManagePotId(null);
+                          }}
                           className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer text-left"
                         >
                           <Trash2 size={15} className="shrink-0" />
@@ -723,23 +736,45 @@ export default function PotsPage() {
 
       {/* ── Dissolve confirm modal ── */}
       {dissolveTarget && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setDissolveTarget(null)}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => { setDissolveTarget(null); setDissolveOtp(null); setDissolveOtpInput(""); }}>
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="px-6 pt-8 pb-5 text-center">
               <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
                 <Trash2 size={24} className="text-red-500" />
               </div>
-              <h2 className="font-bold text-gray-900 text-lg mb-2">Dissolve "{dissolveTarget.title}"?</h2>
+              <h2 className="font-bold text-gray-900 text-lg mb-2">Dissolve &ldquo;{dissolveTarget.title}&rdquo;?</h2>
               <p className="text-sm text-gray-500">
-                All contributions ({fmt(dissolveTarget.totalSaved)}) will be returned to each member's balance. This cannot be undone.
+                All contributions ({fmt(dissolveTarget.totalSaved)}) will be returned to each member&apos;s balance. This cannot be undone.
               </p>
+
+              {dissolveOtp && (
+                <div className="mt-4 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] px-4 py-3 text-left">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-[#166534] mb-1">Demo verification</p>
+                  <p className="text-[#166534] text-sm">Your code: <span className="font-bold text-xl tracking-[0.25em]">{dissolveOtp}</span></p>
+                </div>
+              )}
+
+              <div className="mt-4 text-left">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Enter code to confirm
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  placeholder="000000"
+                  value={dissolveOtpInput}
+                  onChange={(e) => setDissolveOtpInput(e.target.value.replace(/\D/g, ""))}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-center text-2xl tracking-[0.4em] font-mono outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 transition-all"
+                />
+              </div>
             </div>
             <div className="px-6 pb-6 flex gap-2">
-              <button onClick={() => setDissolveTarget(null)}
+              <button onClick={() => { setDissolveTarget(null); setDissolveOtp(null); setDissolveOtpInput(""); }}
                 className="flex-1 py-2.5 rounded-2xl bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-colors cursor-pointer">
                 Keep pot
               </button>
-              <button onClick={handleDissolve} disabled={dissolving}
+              <button onClick={handleDissolve} disabled={dissolving || dissolveOtpInput !== dissolveOtp}
                 className="flex-1 py-2.5 rounded-2xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-60 cursor-pointer">
                 {dissolving ? "Dissolving…" : "Dissolve & refund"}
               </button>
