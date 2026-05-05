@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 
-// Page transition wrapper — fades + small slide between routes
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <motion.div

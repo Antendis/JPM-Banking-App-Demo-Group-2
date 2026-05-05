@@ -19,6 +19,7 @@ interface Pot {
   availableBalance: number;
   myContribution: number;
   memberTotals: MemberTotal[];
+  sparkline: number[];
   cardNumber: string;
   cardExpiry: string;
   cardCvv: string;
@@ -38,7 +39,8 @@ function fmtCard(num: string) {
   return num.replace(/(.{4})/g, "$1 ").trim();
 }
 
-const PROGRESS_COLORS = ["bg-emerald-500", "bg-teal-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-blue-500"];
+const PROGRESS_COLORS   = ["bg-emerald-500", "bg-teal-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-blue-500"];
+const SPARKLINE_COLORS  = ["#10b981",        "#14b8a6",    "#8b5cf6",       "#f59e0b",       "#f43f5e",     "#3b82f6"   ];
 const BUTTON_COLORS   = ["bg-emerald-600 hover:bg-emerald-700", "bg-teal-600 hover:bg-teal-700", "bg-violet-600 hover:bg-violet-700", "bg-amber-500 hover:bg-amber-600", "bg-rose-600 hover:bg-rose-700", "bg-blue-600 hover:bg-blue-700"];
 const PLANT_COLORS    = [
   { bg: "bg-emerald-50",  icon: "text-emerald-600" },
@@ -65,13 +67,13 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
   );
 
   const plants = [
-    // 0 — Monstera: two broad sweeping leaves + stem
+    // monstera
     <g key="monstera">
       <path d="M16 23V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       <path d="M16 17C13 15.5 9 10 11 5C12.5 1.5 16.5 3.5 16 12" fill="currentColor" opacity="0.9"/>
       <path d="M16 17C19 15.5 23 10 21 5C19.5 1.5 15.5 3.5 16 12" fill="currentColor" opacity="0.7"/>
     </g>,
-    // 1 — Cactus: rounded body with two arms
+    // cactus
     <g key="cactus">
       <rect x="13" y="6" width="6" height="17" rx="3" fill="currentColor"/>
       <rect x="7"  y="10" width="7" height="5"  rx="2.5" fill="currentColor" opacity="0.85"/>
@@ -79,7 +81,7 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
       <rect x="6"  y="9"  width="2" height="7"  rx="1"   fill="currentColor"/>
       <rect x="24" y="12" width="2" height="7"  rx="1"   fill="currentColor"/>
     </g>,
-    // 2 — Fern/Palm: arching fronds with leaf tips
+    // fern
     <g key="fern">
       <path d="M16 23V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       <path d="M16 16C13 13 8  7 11 3"  stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" fill="none"/>
@@ -91,7 +93,7 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
       <circle cx="13" cy="9"  r="1.5" fill="currentColor"/>
       <circle cx="19" cy="9"  r="1.5" fill="currentColor"/>
     </g>,
-    // 3 — Succulent: fat rosette of ellipse leaves
+    // succulent
     <g key="succulent">
       <ellipse cx="16" cy="18" rx="4"   ry="5.5" fill="currentColor"/>
       <ellipse cx="10" cy="20" rx="3"   ry="5"   fill="currentColor" opacity="0.8" transform="rotate(-25 10 20)"/>
@@ -99,7 +101,7 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
       <ellipse cx="7"  cy="21" rx="2.5" ry="4"   fill="currentColor" opacity="0.6" transform="rotate(-40 7 21)"/>
       <ellipse cx="25" cy="21" rx="2.5" ry="4"   fill="currentColor" opacity="0.6" transform="rotate(40 25 21)"/>
     </g>,
-    // 4 — Snake plant: three tall pointed blades
+    // snake plant
     <g key="snake">
       <path d="M16 23 L14.5 7C14.5 5.5 15.2 4.5 16 4.5C16.8 4.5 17.5 5.5 17.5 7Z" fill="currentColor"/>
       <path d="M11 23 L10 12C10 10.5 10.8 9.5 11.8 10.5C12.5 11.5 12.5 14 11 23Z" fill="currentColor" opacity="0.8"/>
@@ -111,6 +113,45 @@ function PlantIcon({ index, className }: { index: number; className?: string }) 
     <svg viewBox="0 0 32 32" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
       {plants[index % plants.length]}
       {pot}
+    </svg>
+  );
+}
+
+function SparkLine({ data, color, id }: { data: number[]; color: string; id: string }) {
+  if (data.length < 2) return null;
+
+  const W = 300;
+  const H = 36;
+  const max = Math.max(...data);
+  if (max === 0) return null;
+
+  const pts = data.map((v, i) => ({
+    x: (i / (data.length - 1)) * W,
+    y: H - (v / max) * (H * 0.85),
+  }));
+
+  const line = pts
+    .map((p, i) => {
+      if (i === 0) return `M ${p.x} ${p.y}`;
+      const prev = pts[i - 1];
+      const cpx = (prev.x + p.x) / 2;
+      return `C ${cpx} ${prev.y} ${cpx} ${p.y} ${p.x} ${p.y}`;
+    })
+    .join(" ");
+
+  const area = `${line} L ${pts[pts.length - 1].x} ${H} L ${pts[0].x} ${H} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-9" preserveAspectRatio="none" aria-hidden>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.18" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill={`url(#${id})`} />
+      <path d={line} stroke={color} strokeWidth="1.75" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="2.5" fill={color} />
     </svg>
   );
 }
@@ -387,6 +428,13 @@ export default function PotsPage() {
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div className={`${barColor} h-full rounded-full transition-all`} style={{ width: `${progress}%` }} />
               </div>
+
+              {/* Sparkline */}
+              <SparkLine
+                data={pot.sparkline}
+                color={SPARKLINE_COLORS[idx % SPARKLINE_COLORS.length]}
+                id={`spark-${pot.id}`}
+              />
 
               {/* Virtual card */}
               {cardShown && (
