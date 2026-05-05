@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDelayedLoading } from "@/lib/useDelayedLoading";
 
 interface ScheduledPayment {
   id: number;
@@ -48,7 +47,6 @@ export default function ScheduledPage() {
   const [loading, setLoading]     = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [creating, setCreating]   = useState(false);
-  const spinner = useDelayedLoading(creating);
   const [feedback, setFeedback]   = useState<{ msg: string; ok: boolean } | null>(null);
 
   const [form, setForm] = useState({
@@ -333,8 +331,7 @@ export default function ScheduledPage() {
                   Cancel
                 </button>
                 <button type="submit" disabled={creating}
-                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer flex items-center justify-center gap-1.5">
-                  {spinner && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer">
                   {creating ? "Scheduling…" : "Schedule"}
                 </button>
               </div>

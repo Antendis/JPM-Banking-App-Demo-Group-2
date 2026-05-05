@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useDelayedLoading } from "@/lib/useDelayedLoading";
 
 export default function LoginPage() {
   const [step, setStep]         = useState<1 | 2>(1);
@@ -12,7 +11,6 @@ export default function LoginPage() {
   const [email, setEmail]       = useState("");
   const [demoOtp, setDemoOtp]   = useState<string | null>(null);
   const router = useRouter();
-  const spinner = useDelayedLoading(loading);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -156,16 +154,10 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer"
                 >
-                  {spinner && <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {loading ? "Signing in…" : "Sign in"}
                 </button>
-                <div className="text-center">
-                  <Link href="/forgot-password" className="text-xs text-gray-400 hover:text-[#1a6e3f] transition-colors">
-                    Forgot your password?
-                  </Link>
-                </div>
               </form>
             ) : (
               <form onSubmit={handleOtp} className="space-y-5">
@@ -184,9 +176,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-[#1a6e3f] text-white rounded-xl font-semibold text-sm hover:bg-[#0d3d22] disabled:opacity-60 transition-all shadow-lg shadow-green-900/20 hover:shadow-none cursor-pointer"
                 >
-                  {spinner && <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                   {loading ? "Verifying…" : "Verify & sign in"}
                 </button>
                 <button

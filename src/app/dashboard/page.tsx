@@ -147,46 +147,22 @@ const QUICK_ACTIONS = [
   { label: "History",   icon: "≡",  href: "/dashboard/viewalltransactions" },
 ];
 
-const NUDGE_KEY = "onepot_nudge_date";
-
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 export default function DashboardPage() {
   const [user, setUser]          = useState<User | null>(null);
   const [transactions, setTxs]  = useState<Transaction[]>([]);
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [loading, setLoading]   = useState(true);
-  const [nudge, setNudge]       = useState(false);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/user/me").then((r) => r.json()),
       fetch("/api/transactions?limit=50").then((r) => r.json()),
-      fetch("/api/pots").then((r) => r.json()),
-    ]).then(([u, txs, pots]) => {
+    ]).then(([u, txs]) => {
       setUser(u);
       setTxs(Array.isArray(txs) ? txs : []);
-
-      // Show nudge if user is in pots but hasn't contributed to any of them,
-      // and hasn't been nudged today
-      if (Array.isArray(pots) && pots.length > 0) {
-        const hasUncontributed = pots.some((p: { myContribution: number }) => p.myContribution === 0);
-        const lastNudge = localStorage.getItem(NUDGE_KEY);
-        if (hasUncontributed && lastNudge !== todayStr()) {
-          setNudge(true);
-        }
-      }
-
       setLoading(false);
     });
   }, []);
-
-  const dismissNudge = () => {
-    localStorage.setItem(NUDGE_KEY, todayStr());
-    setNudge(false);
-  };
 
   if (loading) {
     return (
@@ -206,22 +182,6 @@ export default function DashboardPage() {
         <p className="text-gray-400 text-sm font-medium px-1 mb-4">
           {user ? greeting(user.name) : "Welcome back"}
         </p>
-
-        {/* Pot nudge */}
-        {nudge && (
-          <div className="mb-4 flex items-start gap-3 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl px-4 py-3.5 shadow-sm">
-            <span className="text-xl shrink-0">⬡</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[#166534]">Your pot is waiting for you</p>
-              <p className="text-xs text-[#166534]/70 mt-0.5">You&apos;re in a pot but haven&apos;t added anything yet - chip in and get the ball rolling!</p>
-              <Link href="/dashboard/pots" onClick={dismissNudge}
-                className="inline-block mt-2 text-xs font-semibold text-[#1a6e3f] underline underline-offset-2">
-                Go to pots →
-              </Link>
-            </div>
-            <button onClick={dismissNudge} className="text-[#166534]/50 hover:text-[#166534] text-lg leading-none shrink-0 cursor-pointer">×</button>
-          </div>
-        )}
 
         {/* ── Two-column on desktop, single on mobile ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-5 items-start">
