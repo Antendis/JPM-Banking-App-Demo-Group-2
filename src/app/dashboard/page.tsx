@@ -96,6 +96,49 @@ function TxModal({ tx, onClose }: { tx: Transaction; onClose: () => void }) {
   );
 }
 
+function BalanceSparkline({ transactions, currentBalance }: { transactions: Transaction[]; currentBalance: number }) {
+  if (transactions.length < 2) return null;
+
+  const sorted = [...transactions].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  const deltas = sorted.map((t) => (t.type === "CREDIT" ? t.amount : -t.amount));
+  const cumulative = deltas.reduce<number[]>((acc, d) => { acc.push((acc[acc.length - 1] ?? 0) + d); return acc; }, []);
+  const offset = currentBalance - cumulative[cumulative.length - 1];
+  const points = [offset, ...cumulative.map((d) => offset + d)];
+
+  const W = 300, H = 40;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+
+  const pts = points.map((v, i) => ({
+    x: (i / (points.length - 1)) * W,
+    y: H - ((v - min) / range) * (H * 0.8) - H * 0.1,
+  }));
+
+  const line = pts.map((p, i) => {
+    if (i === 0) return `M ${p.x} ${p.y}`;
+    const prev = pts[i - 1];
+    const cpx = (prev.x + p.x) / 2;
+    return `C ${cpx} ${prev.y} ${cpx} ${p.y} ${p.x} ${p.y}`;
+  }).join(" ");
+
+  const area = `${line} L ${pts[pts.length - 1].x} ${H} L ${pts[0].x} ${H} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-10 mt-4" preserveAspectRatio="none" aria-hidden>
+      <defs>
+        <linearGradient id="bal-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="white" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#bal-grad)" />
+      <path d={line} stroke="white" strokeWidth="1.5" strokeOpacity="0.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="3" fill="white" fillOpacity="0.9" />
+    </svg>
+  );
+}
+
 function SpendingDonut({ transactions }: { transactions: Transaction[] }) {
   const debits = transactions.filter((t) => t.type === "DEBIT" && SPEND_CATS.includes(t.category));
   const totals = SPEND_CATS.map((cat) => ({
@@ -158,7 +201,7 @@ export default function DashboardPage() {
       fetch("/api/user/me").then((r) => r.json()),
       fetch("/api/transactions?limit=50").then((r) => r.json()),
     ]).then(([u, txs]) => {
-      setUser(u);
+      setUser(u?.id ? u : null);
       setTxs(Array.isArray(txs) ? txs : []);
       setLoading(false);
     });
@@ -180,7 +223,7 @@ export default function DashboardPage() {
 
         {/* Greeting — full width */}
         <p className="text-gray-400 text-sm font-medium px-1 mb-4">
-          {user ? greeting(user.name) : "Welcome back"}
+          {user?.name ? greeting(user.name) : "Welcome back"}
         </p>
 
         {/* ── Two-column on desktop, single on mobile ── */}
@@ -194,11 +237,18 @@ export default function DashboardPage() {
               <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-widest mb-2">
                 Available balance
               </p>
-              <p className="text-5xl font-bold tracking-tight mb-5 tabular-nums">
+              <p className="text-5xl font-bold tracking-tight tabular-nums">
                 {user ? fmt(user.balance) : "—"}
               </p>
-              <div className="h-px bg-white/10 mb-4" />
-              <div className="flex gap-6 text-sm">
+
+              {/* Balance trend sparkline */}
+              {transactions.length > 1 && (
+                <BalanceSparkline transactions={transactions} currentBalance={user?.balance ?? 0} />
+              )}
+
+              <div className="h-px bg-white/10 mt-4 mb-4" />
+
+              <div className="flex gap-6 text-sm mb-4">
                 <div>
                   <p className="text-gray-600 text-[10px] uppercase tracking-wide mb-0.5">Account</p>
                   <p className="font-semibold text-gray-300 tracking-wider">{user?.accountNumber ?? "—"}</p>
@@ -208,6 +258,36 @@ export default function DashboardPage() {
                   <p className="font-semibold text-gray-300">{user?.sortCode ?? "—"}</p>
                 </div>
               </div>
+
+              {/* Monthly in / out pills */}
+              {(() => {
+                const now = new Date();
+                const month = transactions.filter((t) => {
+                  const d = new Date(t.createdAt);
+                  return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+                const monthIn  = month.filter((t) => t.type === "CREDIT").reduce((s, t) => s + t.amount, 0);
+                const monthOut = month.filter((t) => t.type === "DEBIT").reduce((s, t) => s + t.amount, 0);
+                if (monthIn === 0 && monthOut === 0) return null;
+                return (
+                  <div className="flex gap-2">
+                    {monthIn > 0 && (
+                      <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/20 rounded-full px-3 py-1">
+                        <span className="text-emerald-400 text-xs font-bold">↑</span>
+                        <span className="text-emerald-300 text-xs font-semibold tabular-nums">{fmt(monthIn)}</span>
+                        <span className="text-emerald-500/70 text-[10px]">in</span>
+                      </div>
+                    )}
+                    {monthOut > 0 && (
+                      <div className="flex items-center gap-1.5 bg-rose-500/15 border border-rose-500/20 rounded-full px-3 py-1">
+                        <span className="text-rose-400 text-xs font-bold">↓</span>
+                        <span className="text-rose-300 text-xs font-semibold tabular-nums">{fmt(monthOut)}</span>
+                        <span className="text-rose-500/70 text-[10px]">out</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Quick actions */}
