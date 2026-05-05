@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Settings, ChevronDown, CreditCard, LogOut, Trash2 } from "lucide-react";
 
 interface MemberTotal {
   userId: number;
@@ -37,7 +38,16 @@ function fmtCard(num: string) {
   return num.replace(/(.{4})/g, "$1 ").trim();
 }
 
-const COLORS = ["bg-emerald-500", "bg-teal-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-blue-500"];
+const PROGRESS_COLORS = ["bg-emerald-500", "bg-teal-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-blue-500"];
+const BUTTON_COLORS   = ["bg-emerald-600 hover:bg-emerald-700", "bg-teal-600 hover:bg-teal-700", "bg-violet-600 hover:bg-violet-700", "bg-amber-500 hover:bg-amber-600", "bg-rose-600 hover:bg-rose-700", "bg-blue-600 hover:bg-blue-700"];
+const PLANT_COLORS    = [
+  { bg: "bg-emerald-50",  icon: "text-emerald-600" },
+  { bg: "bg-teal-50",     icon: "text-teal-600"    },
+  { bg: "bg-violet-50",   icon: "text-violet-600"  },
+  { bg: "bg-amber-50",    icon: "text-amber-600"   },
+  { bg: "bg-rose-50",     icon: "text-rose-600"    },
+  { bg: "bg-blue-50",     icon: "text-blue-600"    },
+];
 const CARD_GRADIENTS = [
   "from-emerald-700 to-teal-900",
   "from-violet-700 to-indigo-900",
@@ -45,6 +55,65 @@ const CARD_GRADIENTS = [
   "from-rose-600 to-pink-900",
   "from-blue-700 to-cyan-900",
 ];
+
+function PlantIcon({ index, className }: { index: number; className?: string }) {
+  const pot = (
+    <>
+      <rect x="5" y="23" width="22" height="3" rx="1.5" fill="currentColor" opacity="0.45"/>
+      <path d="M7 26L6.5 31H25.5L25 26Z" fill="currentColor" opacity="0.3"/>
+    </>
+  );
+
+  const plants = [
+    // 0 — Monstera: two broad sweeping leaves + stem
+    <g key="monstera">
+      <path d="M16 23V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M16 17C13 15.5 9 10 11 5C12.5 1.5 16.5 3.5 16 12" fill="currentColor" opacity="0.9"/>
+      <path d="M16 17C19 15.5 23 10 21 5C19.5 1.5 15.5 3.5 16 12" fill="currentColor" opacity="0.7"/>
+    </g>,
+    // 1 — Cactus: rounded body with two arms
+    <g key="cactus">
+      <rect x="13" y="6" width="6" height="17" rx="3" fill="currentColor"/>
+      <rect x="7"  y="10" width="7" height="5"  rx="2.5" fill="currentColor" opacity="0.85"/>
+      <rect x="18" y="13" width="7" height="5"  rx="2.5" fill="currentColor" opacity="0.85"/>
+      <rect x="6"  y="9"  width="2" height="7"  rx="1"   fill="currentColor"/>
+      <rect x="24" y="12" width="2" height="7"  rx="1"   fill="currentColor"/>
+    </g>,
+    // 2 — Fern/Palm: arching fronds with leaf tips
+    <g key="fern">
+      <path d="M16 23V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M16 16C13 13 8  7 11 3"  stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" fill="none"/>
+      <path d="M16 18C19 15 24 9 21 5"  stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" fill="none"/>
+      <path d="M16 20C14 17 11 13 13 9" stroke="currentColor" strokeWidth="1.5"  strokeLinecap="round" fill="none"/>
+      <path d="M16 20C18 17 21 13 19 9" stroke="currentColor" strokeWidth="1.5"  strokeLinecap="round" fill="none"/>
+      <circle cx="11" cy="3"  r="2"   fill="currentColor"/>
+      <circle cx="21" cy="5"  r="2"   fill="currentColor"/>
+      <circle cx="13" cy="9"  r="1.5" fill="currentColor"/>
+      <circle cx="19" cy="9"  r="1.5" fill="currentColor"/>
+    </g>,
+    // 3 — Succulent: fat rosette of ellipse leaves
+    <g key="succulent">
+      <ellipse cx="16" cy="18" rx="4"   ry="5.5" fill="currentColor"/>
+      <ellipse cx="10" cy="20" rx="3"   ry="5"   fill="currentColor" opacity="0.8" transform="rotate(-25 10 20)"/>
+      <ellipse cx="22" cy="20" rx="3"   ry="5"   fill="currentColor" opacity="0.8" transform="rotate(25 22 20)"/>
+      <ellipse cx="7"  cy="21" rx="2.5" ry="4"   fill="currentColor" opacity="0.6" transform="rotate(-40 7 21)"/>
+      <ellipse cx="25" cy="21" rx="2.5" ry="4"   fill="currentColor" opacity="0.6" transform="rotate(40 25 21)"/>
+    </g>,
+    // 4 — Snake plant: three tall pointed blades
+    <g key="snake">
+      <path d="M16 23 L14.5 7C14.5 5.5 15.2 4.5 16 4.5C16.8 4.5 17.5 5.5 17.5 7Z" fill="currentColor"/>
+      <path d="M11 23 L10 12C10 10.5 10.8 9.5 11.8 10.5C12.5 11.5 12.5 14 11 23Z" fill="currentColor" opacity="0.8"/>
+      <path d="M21 23 L22 12C22 10.5 21.2 9.5 20.2 10.5C19.5 11.5 19.5 14 21 23Z" fill="currentColor" opacity="0.8"/>
+    </g>,
+  ];
+
+  return (
+    <svg viewBox="0 0 32 32" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      {plants[index % plants.length]}
+      {pot}
+    </svg>
+  );
+}
 
 export default function PotsPage() {
   const [pots, setPots]           = useState<Pot[]>([]);
@@ -56,6 +125,7 @@ export default function PotsPage() {
   const [dissolveTarget, setDissolveTarget] = useState<Pot | null>(null);
   const [leaveTarget, setLeaveTarget]       = useState<Pot | null>(null);
   const [spendTarget, setSpendTarget]       = useState<Pot | null>(null);
+  const [managePotId, setManagePotId]       = useState<number | null>(null);
 
   const [creating, setCreating]     = useState(false);
   const [contributing, setContrib]  = useState(false);
@@ -224,15 +294,13 @@ export default function PotsPage() {
         {/* Header */}
         <div className="flex items-center justify-between px-1">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Your Pots</h1>
-            <p className="text-sm text-gray-400">Split costs, save together</p>
+            <h1 className="text-xl font-bold text-gray-900">Your pots</h1>
+            <p className="text-sm text-gray-400">Save, share and grow together.</p>
           </div>
           <button
             onClick={() => atLimit ? showFeedback("You can be in at most 5 active pots.", false) : setCreateOpen(true)}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm cursor-pointer transition-colors ${
-              atLimit
-                ? "bg-gray-200 text-gray-400"
-                : "bg-[#1a6e3f] text-white hover:bg-[#0d3d22]"
+              atLimit ? "bg-gray-200 text-gray-400" : "bg-[#1a6e3f] text-white hover:bg-[#0d3d22]"
             }`}
           >
             <span className="text-lg leading-none">+</span> New pot
@@ -257,7 +325,9 @@ export default function PotsPage() {
         {/* Empty state */}
         {pots.length === 0 && (
           <div className="bg-white rounded-3xl p-10 text-center shadow-sm">
-            <p className="text-4xl mb-3">⬡</p>
+            <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-4">
+              <PlantIcon index={0} className="w-10 h-10 text-emerald-600" />
+            </div>
             <p className="font-bold text-gray-700 mb-1">No pots yet</p>
             <p className="text-sm text-gray-400 mb-4">Create a pot to start pooling money with others.</p>
             <button
@@ -269,34 +339,48 @@ export default function PotsPage() {
           </div>
         )}
 
+        {/* Click-outside overlay for manage dropdown */}
+        {managePotId !== null && (
+          <div className="fixed inset-0 z-[5]" onClick={() => setManagePotId(null)} />
+        )}
+
         {/* Pots list */}
         {pots.map((pot, idx) => {
           const progress  = Math.min((pot.totalSaved / pot.target) * 100, 100);
-          const barColor  = COLORS[idx % COLORS.length];
+          const barColor  = PROGRESS_COLORS[idx % PROGRESS_COLORS.length];
           const cardGrad  = CARD_GRADIENTS[idx % CARD_GRADIENTS.length];
+          const btnColor  = BUTTON_COLORS[idx % BUTTON_COLORS.length];
+          const plantCol  = PLANT_COLORS[idx % PLANT_COLORS.length];
           const cardShown = shownCards.has(pot.id);
+          const manageOpen = managePotId === pot.id;
 
           return (
             <div key={pot.id} className="bg-white rounded-3xl p-5 shadow-sm space-y-3">
-              {/* Title + amounts — separate rows on mobile */}
-              <div>
-                <div className="flex items-start gap-2 justify-between">
-                  <div className="min-w-0">
-                    <h2 className="font-bold text-gray-900 truncate">{pot.title}</h2>
-                    {pot.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{pot.description}</p>}
-                  </div>
-                  {/* Show card toggle */}
-                  <button
-                    onClick={() => toggleCard(pot.id)}
-                    className="shrink-0 text-xs font-semibold text-[#1a6e3f] hover:underline cursor-pointer"
-                  >
-                    {cardShown ? "Hide card" : "Show card"}
-                  </button>
+
+              {/* Header: plant icon + title + show-card toggle */}
+              <div className="flex items-start gap-3">
+                <div className={`w-14 h-14 rounded-2xl ${plantCol.bg} flex items-center justify-center shrink-0`}>
+                  <PlantIcon index={idx} className={`w-9 h-9 ${plantCol.icon}`} />
                 </div>
-                {/* Saved / target on its own row so it never squishes */}
-                <p className="text-sm font-semibold text-gray-500 tabular-nums mt-1">
-                  {fmt(pot.totalSaved)} saved &middot; {fmt(pot.target)} target
-                </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h2 className="font-bold text-gray-900 truncate">{pot.title}</h2>
+                      {pot.description && (
+                        <p className="text-xs text-gray-400 mt-0.5 truncate">{pot.description}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => toggleCard(pot.id)}
+                      className="shrink-0 text-xs font-semibold text-[#1a6e3f] hover:underline cursor-pointer"
+                    >
+                      {cardShown ? "Hide card ↑" : "Show card ↓"}
+                    </button>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-500 tabular-nums mt-1">
+                    {fmt(pot.totalSaved)} saved &middot; {fmt(pot.target)} target
+                  </p>
+                </div>
               </div>
 
               {/* Progress bar */}
@@ -304,7 +388,7 @@ export default function PotsPage() {
                 <div className={`${barColor} h-full rounded-full transition-all`} style={{ width: `${progress}%` }} />
               </div>
 
-              {/* Virtual card (shown on toggle) */}
+              {/* Virtual card */}
               {cardShown && (
                 <div className={`bg-gradient-to-br ${cardGrad} rounded-2xl p-5 text-white shadow-lg`}>
                   <div className="flex justify-between items-start mb-6">
@@ -356,34 +440,57 @@ export default function PotsPage() {
               </p>
 
               {/* Actions */}
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2">
                 <button
                   onClick={() => { setContTarget(pot); setContAmount(""); }}
-                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors cursor-pointer"
+                  className={`flex-1 py-2.5 rounded-2xl ${btnColor} text-white text-sm font-semibold transition-colors cursor-pointer`}
                 >
                   Add money
                 </button>
-                <button
-                  onClick={() => { setSpendTarget(pot); setSpendAmount(""); setSpendDesc(""); }}
-                  className="flex-1 py-2.5 rounded-2xl bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
-                >
-                  Pay with card
-                </button>
-                {pot.isCreator ? (
+
+                {/* Manage pot dropdown */}
+                <div className="relative">
                   <button
-                    onClick={() => setDissolveTarget(pot)}
-                    className="px-4 py-2.5 rounded-2xl bg-red-50 text-red-600 text-sm font-semibold hover:bg-red-100 transition-colors cursor-pointer"
+                    onClick={() => setManagePotId(manageOpen ? null : pot.id)}
+                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-colors cursor-pointer ${
+                      manageOpen ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
-                    Dissolve
+                    <Settings size={14} />
+                    <span>Manage pot</span>
+                    <ChevronDown size={13} className={`transition-transform duration-200 ${manageOpen ? "rotate-180" : ""}`} />
                   </button>
-                ) : (
-                  <button
-                    onClick={() => setLeaveTarget(pot)}
-                    className="px-4 py-2.5 rounded-2xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
-                  >
-                    Leave
-                  </button>
-                )}
+
+                  {manageOpen && (
+                    <div className="absolute right-0 bottom-full mb-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-10 w-48">
+                      <button
+                        onClick={() => { setSpendTarget(pot); setSpendAmount(""); setSpendDesc(""); setManagePotId(null); }}
+                        className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-left"
+                      >
+                        <CreditCard size={15} className="text-gray-400 shrink-0" />
+                        Spend from pot
+                      </button>
+                      <div className="border-t border-gray-100 mx-3" />
+                      {pot.isCreator ? (
+                        <button
+                          onClick={() => { setDissolveTarget(pot); setManagePotId(null); }}
+                          className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer text-left"
+                        >
+                          <Trash2 size={15} className="shrink-0" />
+                          Dissolve pot
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => { setLeaveTarget(pot); setManagePotId(null); }}
+                          className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer text-left"
+                        >
+                          <LogOut size={15} className="shrink-0" />
+                          Leave pot
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -400,9 +507,9 @@ export default function PotsPage() {
             </div>
             <form onSubmit={handleCreate} className="px-6 py-5 space-y-4">
               {[
-                { name: "title",       label: "Pot name",   type: "text",   placeholder: "House Rent - May" },
-                { name: "description", label: "Description", type: "text",   placeholder: "Optional note…" },
-                { name: "target",      label: "Target (£)", type: "number", placeholder: "1800" },
+                { name: "title",       label: "Pot name",    type: "text",   placeholder: "House Rent - May" },
+                { name: "description", label: "Description", type: "text",   placeholder: "Optional note…"  },
+                { name: "target",      label: "Target (£)",  type: "number", placeholder: "1800"             },
               ].map(({ name, label, type, placeholder }) => (
                 <div key={name}>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{label}</label>
@@ -463,7 +570,7 @@ export default function PotsPage() {
         </div>
       )}
 
-      {/* ── Contribute modal ── */}
+      {/* ── Contribute / Add money modal ── */}
       {contributeTarget && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setContTarget(null)}>
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
@@ -495,12 +602,12 @@ export default function PotsPage() {
         </div>
       )}
 
-      {/* ── Pay with card modal ── */}
+      {/* ── Spend from pot modal ── */}
       {spendTarget && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSpendTarget(null)}>
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="bg-[#0e1c2f] px-6 py-5">
-              <h2 className="text-white font-bold text-lg">Pay with pot card</h2>
+              <h2 className="text-white font-bold text-lg">Spend from pot</h2>
               <p className="text-gray-400 text-xs mt-0.5">
                 {spendTarget.title} &middot; {fmt(spendTarget.availableBalance)} available
               </p>
@@ -529,7 +636,7 @@ export default function PotsPage() {
                 </button>
                 <button type="submit" disabled={spending || !spendAmount || !spendDesc}
                   className="flex-1 py-2.5 rounded-2xl bg-[#0e1c2f] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-60 cursor-pointer">
-                  {spending ? "Processing…" : "Pay now"}
+                  {spending ? "Processing…" : "Confirm spend"}
                 </button>
               </div>
             </form>
@@ -543,7 +650,7 @@ export default function PotsPage() {
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="px-6 pt-8 pb-5 text-center">
               <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🚪</span>
+                <LogOut size={24} className="text-gray-500" />
               </div>
               <h2 className="font-bold text-gray-900 text-lg mb-2">Leave "{leaveTarget.title}"?</h2>
               <p className="text-sm text-gray-500">
@@ -572,7 +679,7 @@ export default function PotsPage() {
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="px-6 pt-8 pb-5 text-center">
               <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚠️</span>
+                <Trash2 size={24} className="text-red-500" />
               </div>
               <h2 className="font-bold text-gray-900 text-lg mb-2">Dissolve "{dissolveTarget.title}"?</h2>
               <p className="text-sm text-gray-500">
