@@ -1,0 +1,1 @@
+https://jpm-banking-app-demo-group-2.vercel.app/api/reset-demo?secret=onepot-reset
