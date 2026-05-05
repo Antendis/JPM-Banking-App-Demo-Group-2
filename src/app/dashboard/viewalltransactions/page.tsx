@@ -81,6 +81,7 @@ export default function ViewAllTransactionsPage() {
   const [transactions, setTxs]   = useState<Transaction[]>([]);
   const [loading, setLoading]    = useState(true);
   const [filter, setFilter]      = useState("ALL");
+  const [search, setSearch]      = useState("");
   const [selected, setSelected]  = useState<Transaction | null>(null);
 
   useEffect(() => {
@@ -98,7 +99,10 @@ export default function ViewAllTransactionsPage() {
     );
   }
 
-  const filtered = filter === "ALL" ? transactions : transactions.filter((t) => t.category === filter);
+  const q = search.trim().toLowerCase();
+  const filtered = transactions
+    .filter((t) => filter === "ALL" || t.category === filter)
+    .filter((t) => !q || t.description.toLowerCase().includes(q) || t.counterparty?.toLowerCase().includes(q) || t.reference?.toLowerCase().includes(q));
   const totalIn  = transactions.filter((t) => t.type === "CREDIT").reduce((s, t) => s + t.amount, 0);
   const totalOut = transactions.filter((t) => t.type === "DEBIT").reduce((s, t) => s + t.amount, 0);
   const net      = totalIn - totalOut;
@@ -130,6 +134,25 @@ export default function ViewAllTransactionsPage() {
               <p className={`text-base font-bold tabular-nums ${net >= 0 ? "text-emerald-400" : "text-red-400"}`}>{fmt(net)}</p>
             </div>
           </div>
+        </div>
+
+        {/* Search */}
+        <div className="relative">
+          <svg className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search transactions…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all shadow-sm"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer text-lg leading-none">
+              ×
+            </button>
+          )}
         </div>
 
         {/* Filter pills */}
