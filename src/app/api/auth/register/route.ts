@@ -14,6 +14,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (password.length < 8 || !/\d/.test(password) || !/[A-Z]/.test(password)) {
+      return NextResponse.json(
+        { message: "Password must be at least 8 characters and include a number and an uppercase letter." },
+        { status: 400 },
+      );
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return NextResponse.json(

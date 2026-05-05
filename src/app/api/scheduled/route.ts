@@ -61,6 +61,12 @@ async function executePending(userId: number) {
           continue;
         }
 
+        const potRecipient = payment.recipientEmail
+          ? await prisma.user.findUnique({ where: { email: payment.recipientEmail } })
+          : null;
+
+        const payer = await prisma.user.findUnique({ where: { id: userId } });
+
         await prisma.$transaction([
           prisma.scheduledPayment.update({ where: { id: payment.id }, data: { status: "COMPLETED" } }),
           prisma.potExpense.create({
@@ -71,6 +77,22 @@ async function executePending(userId: number) {
               potId: payment.potId!,
             },
           }),
+          ...(potRecipient && payer
+            ? [
+                prisma.user.update({ where: { id: potRecipient.id }, data: { balance: { increment: payment.amount } } }),
+                prisma.transaction.create({
+                  data: {
+                    amount: payment.amount,
+                    description: `Pot payment from ${payer.name}`,
+                    category: "TRANSFER",
+                    counterparty: payer.name,
+                    reference: payment.description,
+                    type: "CREDIT",
+                    userId: potRecipient.id,
+                  },
+                }),
+              ]
+            : []),
         ]);
       }
     } catch {
@@ -118,6 +140,7 @@ export async function POST(req: NextRequest) {
   if (sourceType === "ACCOUNT" && !recipientEmail) {
     return NextResponse.json({ message: "Recipient email is required for account payments." }, { status: 400 });
   }
+  // recipientEmail is optional for POT payments (credits recipient if they're on OnePot)
 
   const schedDate = new Date(scheduledFor);
   if (isNaN(schedDate.getTime()) || schedDate <= new Date()) {
@@ -138,7 +161,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       amount,
       description: description.trim(),
-      recipientEmail: sourceType === "ACCOUNT" ? recipientEmail : null,
+      recipientEmail: recipientEmail?.trim() || null,
       potId: sourceType === "POT" ? parseInt(potId, 10) : null,
       sourceType,
       scheduledFor: schedDate,
