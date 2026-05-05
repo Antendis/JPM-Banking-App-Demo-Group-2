@@ -126,45 +126,66 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Nav stays same */}
+      {/* Mobile Nav */}
       {isDashboard && (
-        <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 safe-area-inset-bottom">
-          <div className="grid grid-cols-5 h-16">
-            {[
-              { label: "Home", href: "/dashboard", icon: "⌂" },
-              { label: "Pots", href: "/dashboard/pots", icon: "⬡" },
-              { label: "Send", href: "/dashboard/send", icon: "↑" },
-              {
-                label: "Txns",
-                href: "/dashboard/viewalltransactions",
-                icon: "≡",
-              },
-              { label: "More", href: null, icon: "…" },
-            ].map(({ label, href, icon }) =>
-              href ? (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition-colors ${
-                    pathname === href ? "text-[#1a6e3f]" : "text-gray-400"
-                  }`}
-                >
-                  <span className="text-lg leading-none">{icon}</span>
-                  <span>{label}</span>
-                </Link>
-              ) : (
+        <>
+          {menuOpen && (
+            <div
+              className="sm:hidden fixed inset-0 z-40 bg-black/30"
+              onClick={() => setMenuOpen(false)}
+            >
+              <div
+                className="absolute bottom-16 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  key={label}
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  className="flex flex-col items-center justify-center gap-0.5 text-xs font-medium text-gray-400"
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-[#f0fdf4] text-[#166534] hover:bg-[#dcfce7] transition-colors disabled:opacity-50"
                 >
-                  <span className="text-lg leading-none">{icon}</span>
-                  <span>{label}</span>
+                  {loggingOut ? "Signing out…" : "Sign out"}
                 </button>
-              ),
-            )}
-          </div>
-        </nav>
+              </div>
+            </div>
+          )}
+          <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 safe-area-inset-bottom">
+            <div className="grid grid-cols-5 h-16">
+              {[
+                { label: "Home", href: "/dashboard", icon: "⌂" },
+                { label: "Pots", href: "/dashboard/pots", icon: "⬡" },
+                { label: "Send", href: "/dashboard/send", icon: "↑" },
+                {
+                  label: "Txns",
+                  href: "/dashboard/viewalltransactions",
+                  icon: "≡",
+                },
+                { label: "More", href: null, icon: "…" },
+              ].map(({ label, href, icon }) =>
+                href ? (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition-colors ${
+                      pathname === href ? "text-[#1a6e3f]" : "text-gray-400"
+                    }`}
+                  >
+                    <span className="text-lg leading-none">{icon}</span>
+                    <span>{label}</span>
+                  </Link>
+                ) : (
+                  <button
+                    key={label}
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    className={`flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition-colors ${menuOpen ? "text-[#1a6e3f]" : "text-gray-400"}`}
+                  >
+                    <span className="text-lg leading-none">{icon}</span>
+                    <span>{label}</span>
+                  </button>
+                ),
+              )}
+            </div>
+          </nav>
+        </>
       )}
     </>
   );
