@@ -10,12 +10,16 @@ function PotIcon() {
   return (
     <div className="w-9 h-9 rounded-lg bg-[#1a6e3f] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="6" y="16" width="12" height="2.5" rx="1.25" fill="white" opacity="0.65"/>
-        <path d="M7.5 18.5L7 23H17L16.5 18.5Z" fill="white" opacity="0.5"/>
-        <path d="M12 16.5V10" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M12 13.5C9.5 12.5 6 9 7 5C8 2.5 11.5 3.5 12 9.5" fill="white" opacity="0.95"/>
-        <path d="M12 13.5C14.5 12.5 18 9 17 5C16 2.5 12.5 3.5 12 9.5" fill="white" opacity="0.75"/>
-        <path d="M12 9.5C12 9.5 11 7.5 12 6.5C13 5.5 13 8 12 9.5Z" fill="white" opacity="0.5"/>
+        {/* Pot body */}
+        <path d="M7 15.5L8 21.5H16L17 15.5H7Z" fill="white" opacity="0.9"/>
+        {/* Pot rim */}
+        <rect x="5.5" y="13.5" width="13" height="2.5" rx="1.25" fill="white"/>
+        {/* Stem */}
+        <path d="M12 13.5V9" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+        {/* Left leaf */}
+        <path d="M12 11.5C10 10.5 7 7.5 8 4C9 1.5 12 3 12 8.5" fill="white"/>
+        {/* Right leaf */}
+        <path d="M12 11.5C14 10.5 17 7.5 16 4C15 1.5 12 3 12 8.5" fill="white" opacity="0.75"/>
       </svg>
     </div>
   );
