@@ -4,9 +4,36 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+function LoadingScreen() {
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#fdfcf9]">
+      <div className="flex flex-col items-center gap-8">
+        {/* Spinning ring with lock */}
+        <div className="relative w-20 h-20">
+          <div className="absolute inset-0 rounded-full border-4 border-gray-100" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#1a6e3f] animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a6e3f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </div>
+        </div>
+
+        {/* Text */}
+        <div className="text-center space-y-1">
+          <p className="text-sm font-semibold text-gray-800">Secure login</p>
+          <p className="text-xs text-gray-400">Taking you to your account</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   const [step, setStep]               = useState<1 | 2>(1);
   const [loading, setLoading]         = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [error, setError]             = useState<string | null>(null);
   const [email, setEmail]             = useState("");
   const [demoOtp, setDemoOtp]         = useState<string | null>(null);
@@ -69,6 +96,12 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
+        setRedirecting(true);
+        await Promise.all([
+          new Promise(r => setTimeout(r, 1000)),
+          fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => { if (d) sessionStorage.setItem("prefetch_user", JSON.stringify(d)); }),
+          fetch("/api/transactions?limit=50").then(r => r.ok ? r.json() : []).then(d => { sessionStorage.setItem("prefetch_txs", JSON.stringify(d)); }),
+        ]);
         router.push("/dashboard");
       } else {
         const data = await res.json();
@@ -80,6 +113,8 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (redirecting) return <LoadingScreen />;
 
   return (
     <div className="flex min-h-[calc(100vh-57px)] items-center justify-center bg-[#faf8f3] px-4 py-12">
@@ -95,9 +130,12 @@ export default function LoginPage() {
             <div className="mb-8 text-center">
               <Link href="/" className="inline-flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-[#1a6e3f] flex items-center justify-center">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 11h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2v-9z"/>
-                    <path d="M8 11V7a4 4 0 018 0v4"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 15.5L8 21.5H16L17 15.5H7Z" fill="white" opacity="0.9"/>
+                    <rect x="5.5" y="13.5" width="13" height="2.5" rx="1.25" fill="white"/>
+                    <path d="M12 13.5V9" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+                    <path d="M12 11.5C10 10.5 7 7.5 8 4C9 1.5 12 3 12 8.5" fill="white"/>
+                    <path d="M12 11.5C14 10.5 17 7.5 16 4C15 1.5 12 3 12 8.5" fill="white" opacity="0.75"/>
                   </svg>
                 </div>
                 <span className="font-bold text-gray-900">One<span className="text-[#1a6e3f]">Pot</span></span>

@@ -194,26 +194,25 @@ export default function DashboardPage() {
   const [user, setUser]          = useState<User | null>(null);
   const [transactions, setTxs]  = useState<Transaction[]>([]);
   const [selected, setSelected] = useState<Transaction | null>(null);
-  const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/user/me").then((r) => r.json()),
-      fetch("/api/transactions?limit=50").then((r) => r.json()),
-    ]).then(([u, txs]) => {
-      setUser(u?.id ? u : null);
-      setTxs(Array.isArray(txs) ? txs : []);
-      setLoading(false);
-    });
+    const cachedUser = sessionStorage.getItem("prefetch_user");
+    const cachedTxs  = sessionStorage.getItem("prefetch_txs");
+    if (cachedUser && cachedTxs) {
+      setUser(JSON.parse(cachedUser));
+      setTxs(JSON.parse(cachedTxs));
+      sessionStorage.removeItem("prefetch_user");
+      sessionStorage.removeItem("prefetch_txs");
+    } else {
+      Promise.all([
+        fetch("/api/user/me").then((r) => r.json()),
+        fetch("/api/transactions?limit=50").then((r) => r.json()),
+      ]).then(([u, txs]) => {
+        setUser(u?.id ? u : null);
+        setTxs(Array.isArray(txs) ? txs : []);
+      });
+    }
   }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#f7f8fa] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#1a6e3f] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   const recent = transactions.slice(0, 20);
 
@@ -238,7 +237,6 @@ export default function DashboardPage() {
             {user?.name ? greeting(user.name) : "Welcome back"}
           </p>
 
-          {/* Balance card — full width, capped so it doesn't stretch too wide on large screens */}
           <div className="bg-[#0e1c2f] rounded-3xl p-6 text-white shadow-2xl max-w-lg">
             <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-widest mb-2">
               Available balance
@@ -360,4 +358,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

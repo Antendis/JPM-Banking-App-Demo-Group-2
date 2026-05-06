@@ -162,6 +162,9 @@ export default function PotsPage() {
   const [loading, setLoading]     = useState(true);
   const [allUsers, setAllUsers]   = useState<OtherUser[]>([]);
 
+  const [nudgedIds, setNudgedIds]   = useState<Set<string>>(new Set());
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
   const [createOpen, setCreateOpen]         = useState(false);
   const [contributeTarget, setContTarget]   = useState<Pot | null>(null);
   const [dissolveTarget, setDissolveTarget] = useState<Pot | null>(null);
@@ -211,6 +214,7 @@ export default function PotsPage() {
   useEffect(() => {
     loadPots();
     fetch("/api/users").then((r) => r.json()).then((d) => setAllUsers(Array.isArray(d) ? d : []));
+    fetch("/api/user/me").then((r) => r.json()).then((d) => setCurrentUserId(d?.id ?? null));
   }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -507,12 +511,27 @@ export default function PotsPage() {
 
               {/* Members */}
               <div className="space-y-1.5">
-                {pot.memberTotals.map((m) => (
-                  <div key={m.userId} className="flex justify-between text-sm">
-                    <span className="text-gray-600 truncate">{m.name}</span>
-                    <span className="font-semibold tabular-nums text-gray-900 shrink-0 ml-2">{fmt(m.total)}</span>
-                  </div>
-                ))}
+                {pot.memberTotals.map((m) => {
+                  const nudgeKey = `${pot.id}-${m.userId}`;
+                  const nudged = nudgedIds.has(nudgeKey);
+                  return (
+                    <div key={m.userId} className="flex items-center text-sm">
+                      <span className="text-gray-600 truncate w-28 shrink-0">{m.name}</span>
+                      <div className="flex-1 flex justify-center">
+                        {m.total === 0 && m.userId !== currentUserId && (
+                          <button
+                            onClick={() => setNudgedIds(prev => new Set(prev).add(nudgeKey))}
+                            disabled={nudged}
+                            className={`text-sm px-1.5 py-0 rounded-full transition-all ${nudged ? "opacity-40 cursor-default" : "hover:scale-110 cursor-pointer"}`}
+                          >
+                            👉
+                          </button>
+                        )}
+                      </div>
+                      <span className="font-semibold tabular-nums text-gray-900 w-20 text-right shrink-0">{fmt(m.total)}</span>
+                    </div>
+                  );
+                })}
                 {pot.totalSpent > 0 && (
                   <div className="flex justify-between text-sm pt-1 border-t border-gray-50">
                     <span className="text-gray-400">Spent from pot</span>
