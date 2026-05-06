@@ -167,7 +167,11 @@ export default function PotsPage() {
   const [dissolveTarget, setDissolveTarget] = useState<Pot | null>(null);
   const [leaveTarget, setLeaveTarget]       = useState<Pot | null>(null);
   const [spendTarget, setSpendTarget]       = useState<Pot | null>(null);
+  const [editTarget, setEditTarget]         = useState<Pot | null>(null);
   const [managePotId, setManagePotId]       = useState<number | null>(null);
+
+  const [editing, setEditing]       = useState(false);
+  const [editForm, setEditForm]     = useState({ title: "", description: "" });
 
   const [dissolveOtp, setDissolveOtp]             = useState<string | null>(null);
   const [dissolveOtpInput, setDissolveOtpInput]   = useState("");
@@ -319,6 +323,29 @@ export default function PotsPage() {
       }
     } finally {
       setDissolving(false);
+    }
+  };
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditing(true);
+    try {
+      const res = await fetch(`/api/pots/${editTarget.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: editForm.title, description: editForm.description }),
+      });
+      const d = await res.json();
+      if (res.ok) {
+        setEditTarget(null);
+        showFeedback("Pot updated.", true);
+        loadPots();
+      } else {
+        showFeedback(d.message || "Could not update pot.", false);
+      }
+    } finally {
+      setEditing(false);
     }
   };
 
@@ -523,6 +550,14 @@ export default function PotsPage() {
 
                   {manageOpen && (
                     <div className="absolute right-0 bottom-full mb-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-10 w-48">
+                      <button
+                        onClick={() => { setEditTarget(pot); setEditForm({ title: pot.title, description: pot.description ?? "" }); setManagePotId(null); }}
+                        className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-left"
+                      >
+                        <Settings size={15} className="text-gray-400 shrink-0" />
+                        Edit name
+                      </button>
+                      <div className="border-t border-gray-100 mx-3" />
                       <button
                         onClick={() => { setSpendTarget(pot); setSpendAmount(""); setSpendDesc(""); setManagePotId(null); }}
                         className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer text-left"
@@ -784,6 +819,48 @@ export default function PotsPage() {
                 {dissolving ? "Dissolving…" : "Dissolve & refund"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* ── Edit pot modal ── */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setEditTarget(null)}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-[#1a6e3f] px-6 py-5">
+              <h2 className="text-white font-bold text-lg">Edit pot</h2>
+              <p className="text-green-200 text-xs mt-0.5">Changes apply for all members</p>
+            </div>
+            <form onSubmit={handleEdit} className="px-6 py-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Pot name</label>
+                <input
+                  type="text" required autoFocus
+                  value={editForm.title}
+                  onChange={(e) => setEditForm((p) => ({ ...p, title: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Description (optional)</label>
+                <input
+                  type="text"
+                  placeholder="Optional note…"
+                  value={editForm.description}
+                  onChange={(e) => setEditForm((p) => ({ ...p, description: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#1a6e3f]/30 focus:border-[#1a6e3f] transition-all"
+                />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setEditTarget(null)}
+                  className="flex-1 py-2.5 rounded-2xl bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-colors cursor-pointer">
+                  Cancel
+                </button>
+                <button type="submit" disabled={editing || !editForm.title.trim()}
+                  className="flex-1 py-2.5 rounded-2xl bg-[#1a6e3f] text-white text-sm font-semibold hover:bg-[#0d3d22] transition-colors disabled:opacity-60 cursor-pointer">
+                  {editing ? "Saving…" : "Save changes"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
