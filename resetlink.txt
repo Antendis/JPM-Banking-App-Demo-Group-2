@@ -1,1 +1,8 @@
+
+RESET LINK
 https://jpm-banking-app-demo-group-2.vercel.app/api/reset-demo?secret=onepot-reset
+
+
+
+CALL CARD 1
+curl https://paymentsystem-cards-cf.pages.dev/api/cards/3613a9e0-3dce-4034-85ec-84dd305df30b/0000000000000001
