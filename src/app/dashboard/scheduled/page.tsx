@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface ScheduledPayment {
   id: number;
@@ -130,6 +131,10 @@ export default function ScheduledPage() {
   return (
     <div className="min-h-screen bg-[#f7f8fa] pb-24 sm:pb-8">
       <div className="max-w-xl mx-auto px-4 pt-6 space-y-4">
+
+        <div className="px-1">
+          <Link href="/dashboard" className="text-sm text-[#1a6e3f] font-semibold hover:underline">← Dashboard</Link>
+        </div>
 
         {/* Header */}
         <div className="flex items-center justify-between px-1">
