@@ -238,56 +238,50 @@ export default function DashboardPage() {
             {user?.name ? greeting(user.name) : "Welcome back"}
           </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-5 items-start">
+          {/* Balance card — full width, capped so it doesn't stretch too wide on large screens */}
+          <div className="bg-[#0e1c2f] rounded-3xl p-6 text-white shadow-2xl max-w-lg">
+            <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-widest mb-2">
+              Available balance
+            </p>
+            <p className="text-5xl font-bold tracking-tight tabular-nums">
+              {user ? fmt(user.balance) : "—"}
+            </p>
 
-            {/* Balance card inside green band */}
-            <div className="bg-[#0e1c2f] rounded-3xl p-6 text-white shadow-2xl">
-              <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-widest mb-2">
-                Available balance
-              </p>
-              <p className="text-5xl font-bold tracking-tight tabular-nums">
-                {user ? fmt(user.balance) : "—"}
-              </p>
+            {transactions.length > 1 && (
+              <BalanceSparkline transactions={transactions} currentBalance={user?.balance ?? 0} />
+            )}
 
-              {transactions.length > 1 && (
-                <BalanceSparkline transactions={transactions} currentBalance={user?.balance ?? 0} />
-              )}
+            <div className="h-px bg-white/10 mt-4 mb-4" />
 
-              <div className="h-px bg-white/10 mt-4 mb-4" />
-
-              <div className="flex gap-6 text-sm mb-4">
-                <div>
-                  <p className="text-gray-600 text-[10px] uppercase tracking-wide mb-0.5">Account</p>
-                  <p className="font-semibold text-gray-300 tracking-wider">{user?.accountNumber ?? "—"}</p>
-                </div>
-                <div>
-                  <p className="text-gray-600 text-[10px] uppercase tracking-wide mb-0.5">Sort code</p>
-                  <p className="font-semibold text-gray-300">{user?.sortCode ?? "—"}</p>
-                </div>
+            <div className="flex gap-6 text-sm mb-4">
+              <div>
+                <p className="text-gray-600 text-[10px] uppercase tracking-wide mb-0.5">Account</p>
+                <p className="font-semibold text-gray-300 tracking-wider">{user?.accountNumber ?? "—"}</p>
               </div>
-
-              {(monthIn > 0 || monthOut > 0) && (
-                <div className="flex gap-2 flex-wrap">
-                  {monthIn > 0 && (
-                    <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/20 rounded-full px-3 py-1">
-                      <span className="text-emerald-400 text-xs font-bold">↑</span>
-                      <span className="text-emerald-300 text-xs font-semibold tabular-nums">{fmt(monthIn)}</span>
-                      <span className="text-emerald-500/70 text-[10px]">in</span>
-                    </div>
-                  )}
-                  {monthOut > 0 && (
-                    <div className="flex items-center gap-1.5 bg-rose-500/15 border border-rose-500/20 rounded-full px-3 py-1">
-                      <span className="text-rose-400 text-xs font-bold">↓</span>
-                      <span className="text-rose-300 text-xs font-semibold tabular-nums">{fmt(monthOut)}</span>
-                      <span className="text-rose-500/70 text-[10px]">out</span>
-                    </div>
-                  )}
-                </div>
-              )}
+              <div>
+                <p className="text-gray-600 text-[10px] uppercase tracking-wide mb-0.5">Sort code</p>
+                <p className="font-semibold text-gray-300">{user?.sortCode ?? "—"}</p>
+              </div>
             </div>
 
-            {/* Desktop right column placeholder so band sizes correctly on large screens */}
-            <div className="hidden lg:block" />
+            {(monthIn > 0 || monthOut > 0) && (
+              <div className="flex gap-2 flex-wrap">
+                {monthIn > 0 && (
+                  <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/20 rounded-full px-3 py-1">
+                    <span className="text-emerald-400 text-xs font-bold">↑</span>
+                    <span className="text-emerald-300 text-xs font-semibold tabular-nums">{fmt(monthIn)}</span>
+                    <span className="text-emerald-500/70 text-[10px]">in</span>
+                  </div>
+                )}
+                {monthOut > 0 && (
+                  <div className="flex items-center gap-1.5 bg-rose-500/15 border border-rose-500/20 rounded-full px-3 py-1">
+                    <span className="text-rose-400 text-xs font-bold">↓</span>
+                    <span className="text-rose-300 text-xs font-semibold tabular-nums">{fmt(monthOut)}</span>
+                    <span className="text-rose-500/70 text-[10px]">out</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
