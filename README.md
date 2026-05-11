@@ -57,7 +57,8 @@ Set these in your Vercel project settings:
 - **Send Money:** Instant transfers between any two OnePot accounts
 - **Transaction History:** Full history with category filtering and transaction detail modal
 - **Statements:** Monthly grouped statements
-- **Route Protection:** Unauthenticated users are redirected to login
+- **Scheduled Payments:** Schedule future transfers from your account or a shared pot; cancel pending payments
+- **Route Protection:** `src/proxy.ts` stub exists but is not registered as Next.js middleware (requires renaming to `middleware.ts`) — currently inactive
 - **Mobile:** Full bottom tab navigation on mobile
 
 ---
@@ -73,6 +74,8 @@ Set these in your Vercel project settings:
 | Auth       | Custom (bcryptjs + OTP)                 |
 | Email      | Resend (optional)                       |
 | Styling    | Tailwind CSS v4                         |
+| Animations | Framer Motion                           |
+| Icons      | Lucide React                            |
 
 ---
 
